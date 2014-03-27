@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="org.tnt.pt.repository.dms.UserDao">
+	
+	<select id="findByLoginName" parameterType="String" resultType="User">
+		 select * from dms.V_PT_USER_PRI where userName = #{userName} and password =#{pwd} and rownum = 1 and is_default = 1
+	</select>
+	
+	<select id="getRolesByName" parameterType="String" resultType="String">
+		 select role_name as roleName from dms.V_PT_USER_PRI where userName = #{userName}
+	</select>
+	
+	<select id="findByRoleName" parameterType="map" resultType="User">
+		 select * from dms.V_PT_USER_PRI where userName = #{userName} and role_name =#{roleName}
+	</select>
+	
+	<select id="getAllDepots" parameterType="String" resultType="String">
+		 select code from dms.V_PT_DEPOT
+	</select>
+	
+	<select id="getRPUbyDepotCode" parameterType="String" resultType="String">
+		 select rup from dms.V_PT_DEPOT where code = #{depotCode}
+	</select>
+	
+	<select id="getCusFromHKAccount" parameterType="String" resultType="org.tnt.pt.tntentity.Customer">
+		 select * from dms.V_HK_Account where account_no = #{accountNo} and rownum = 1
+	</select>
+	
+	<select id="getItemNum" parameterType="map" resultType="String">
+		 select items_num from dms.t_chr_weight_def_val where weight_band_from &lt;= #{chargeableweight} and weight_band_to &gt; #{chargeableweight} 
+		 and dest_country = #{countryCode}
+	</select>
+	
+</mapper> 

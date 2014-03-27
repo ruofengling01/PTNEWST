@@ -1,0 +1,17 @@
+1,the Current fuel surcharge:系统默认
+2，the fuel surcharge requested：老客户取数，新客户系统默认
+3，customer name 加长
+4，discount profile weightband名称不够 new pt
+5，重货国家设置可以添加所有国家。下拉出所有国家 大小写不区分
+6，双击zone弹出可以删除
+7，新客户：默认的19%
+	老客户：1，按折扣：折扣率*默认燃油附加费
+		2，默认燃油附加费
+		3，固定的折扣，不会变
+8，summaryInfo.后面加%。重货国家列对齐  close(created) submit(Waiting for Admin's approval)   (Wati)
+9，modify 折扣不取默认值
+10，pt query 加查询条件：status  channel；导出查询结果excel
+11，chargeableweight 只有commercial能看到
+12，导出hwflag 和产品关联判断
+13，到post取数 item值 H/L
+14，折扣为整数
