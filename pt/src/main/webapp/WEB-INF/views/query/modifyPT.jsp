@@ -112,8 +112,9 @@
     });
 
 	function showDetail(val,state){
-		if(state=='<%=PTPARAMETERS.PAYMENT[9]%>'){
-			alert('The state is '+'<%=PTPARAMETERS.PAYMENT[9]%>'+',can not see detail info!');return;
+		if(state=='<%=PTPARAMETERS.PROCESS_SATE[9]%>'){
+			alert('The state is '+'<%=PTPARAMETERS.PROCESS_SATE[9]%>'+',can not see detail info!');
+			return;
 		}
 		window.location.href="${ctx}/ptQuery/tariffPT/"+val;
 	}

@@ -74,7 +74,6 @@ $(document).ready(function(){
                 <th>Top</th>
                 <th>Terrotory</th>
                 <th>Status</th>
-                <th>Operate</th>
             </tr>
         </thead>
         <tbody>
@@ -91,7 +90,6 @@ $(document).ready(function(){
 					<td>SP</td>
 					<td>${business.description}</td>
 					<td>${business.state}</td>
-					<td><a id="appeal" href="#" onclick="stateLog('${business.id}')">State Log</a></td>
 			   </tr>
 			</c:forEach>
         </tbody>
@@ -108,10 +106,6 @@ $(document).ready(function(){
        
     });
 
-    function stateLog(val){
-   	  window.showModalDialog('${ctx}/ptQuery/stateLog/'+val,'','dialogHeight:300px; dialogWidth: 400px;');
-     }
-    
 	function showDetail(val){
 		document.forms[0].action="${ctx}/ptQuery/tariffPT?id="+val;
 		document.forms[0].submit();

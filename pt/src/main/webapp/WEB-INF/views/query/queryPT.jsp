@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="org.tnt.pt.util.PTPARAMETERS"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
@@ -38,6 +39,7 @@ $(document).ready(function(){
 		      <td><input type="text" name="account" value="${model.account}"></td>
 		      <td>Depot:</td>
 		      <td><select name="depot" value="${model.depot}">
+		      <option value="">请选择</option> 
 		      <c:forEach items="${depotList}" var="depots">
 		      	<option value="${depots}" <c:if test="${depots==model.depot}">selected</c:if>>${depots}</option> 
 		      </c:forEach>
@@ -95,7 +97,7 @@ $(document).ready(function(){
              <c:forEach items="${businessList}" var="business">
 				<tr>
 					<td>
-						<a id="showDetail" href="#" onclick="showDetail('${business.id}')">${business.applicationReference}</a>
+						<a id="showDetail" href="#" onclick="showDetail('${business.id}','${business.state}')">${business.applicationReference}</a>
 					</td>
 					<td><fmt:formatDate  value="${business.applicationDate}" pattern="yyyy-MM-dd"></fmt:formatDate ></td>
 					<td>${business.account}</td>
@@ -129,7 +131,11 @@ $(document).ready(function(){
         });
     });
 
-	function showDetail(val){
+	function showDetail(val,state){
+		if(state=='<%=PTPARAMETERS.PROCESS_SATE[9]%>'){
+			alert('The state is '+'<%=PTPARAMETERS.PROCESS_SATE[9]%>'+',can not see detail info!');
+			return;
+		}
 		window.location.href="${ctx}/ptQuery/tariffPT/"+val;
 	}
     

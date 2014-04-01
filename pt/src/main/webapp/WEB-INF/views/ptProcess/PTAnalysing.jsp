@@ -25,71 +25,69 @@
 <body>
 <form action="#${ctx}/ptApprove/ptAnalysing" method="post" id="analysing">
 	<div style="padding:5px;">
-  <h4 class="title">New PT-Summary Info</h4>
-  
-  <table class="modify">
+  <h4 class="title">PT Commercial Analyse</h4>
+  <table class="table_A">
+  <tr>
+  <td width="20%" align="left"><b>PT Approval Ref NO. &nbsp; :</b></td>
+  <td align="left">${business.applicationReference}</td>
+  </tr>
+  <tr></tr>
+  <tr> <td colspan="2"><b>Customer & Shipping Profile</b></td></tr>
+  </table>
+  <table class="tab">
     <tr>
-      <th>Application Date:</th>
-      <td><span id="appDate"><fmt:formatDate value="${business.applicationDate}" pattern="yyyy-MM-dd"/></span></td>
-      <th>Depot:</th>
-      <td>${business.depotCode}</td>
-    </tr>
-    <tr>
-      <th>A new PT Customer?</th>
-      <td>${business.isNewCus}</td>
-      <th>Territory:</th>
-      <td>${business.territory}</td>
-    </tr>
-    <tr>
-      <th>PT Application Reference #:</th>
-      <td>${business.applicationReference}</td>
-      <th>Account #:</th>
+      <td>Customer Name :</td>
+      <td width="40%">${customer.cusName}</td>
+	  <td width="20%">Account # :</td>
       <td>${customer.account}</td>
-      
     </tr>
     <tr>
-      <th>Customer Name</th>
-      <td>${customer.cusName}</td>
-      <th>Channel:</th>
-      <td>${customer.channel}</td>
+      <td>Origin Depot :</td>
+      <td>${business.depotCode}	</td>
+      <td>Average Weight per Consignment :</td>
+      <td></td>
     </tr>
     <tr>
-      <th>Industry</th>
-      <td colspan="3">ServiceIndustry(Advertising,Media,Agency,Laws)</td>
-    </tr>
-    <tr>
-      <th>Current Service Provider</th>
-      <td colspan="3">${customer.serviceProvider}</td>
+	  <td width="20%">Projected Monthly Revenue in CNY: </td>
+      <td colspan="3">220</td>
     </tr>
   </table>
-  <table class="modify">
+  <b>Loading Details</b>
+  <table>
     <tr>
-      <th >Is the customer on fuel surcharge exemption or deduction now?</th>
-      <td >${customer.isFuleDeduction}</td>
-      <th>the Current fuel surcharge</th>
-      <td>Per FS Index
-      <input type="hidden" name="customer.fuelSurcharge" value="Per FS Index"/>
-      <input type="hidden" name="customer.reqFuelSurcharge" value="Per FS Index"/>
-      <input type="hidden" name="customer.isReq" value="NO"/></td>
-    </tr>
-  </table>
-  <table class="modify">
-    <tr>
-      <th ><span><B> Terms  of  Payments:</B></span></th>
-      <td colspan="3">${customer.payment}</td>
+      <td  width="20%">Division :</td>
+      <td  width="40%">G</td>
+      <td  width="20%">RateCategory :</td>
+      <td>CN4PT</td>
     </tr>
     <tr>
-      <th>Is customer a mainly document sender?</th>
-      <td>${business.isDocumentSender}</td>
-      <th>Cons/Stop</th>
+      <td>End Date :</td>
+      <td>Open</td>
+      <td>Review Date :</td>
+      <td>Open</td>
+    </tr>
+    <tr>
+      <td>Effective Date :</td>
+      <td>${business.effectiveDate}</td>
+      <td>Terms of Payment :</td>
+      <td>${customer.payment}</td>
+    </tr>
+	<tr>
+      <td>Option :</td>
+      <td>No discount for potions!</td>
+      <td>Currency :</td>
+      <td>CNY</td>
+    </tr>
+    <tr>
+      <td>Zoning :</td>
+      <td>Set Default</td>
+      <td>Fuel Surchange :</td>
+      <td>FSI according to public fuel surchange</td>
+    </tr>
+    <tr>
+      <td>Cons/Stop</td>
       <td>${business.consStop}</td>
-    </tr>
-     <tr>
-      <th>Prdouct Description(eg:digital cameral)</th>
-      <td colspan="3">${business.description}</td>
-    </tr>
-     <tr>
-      <th>Reason for the PT:</th>
+      <td>Reason for the PT:</td>
       <td colspan="3">${business.reson}</td>
     </tr>
   </table>
@@ -109,15 +107,13 @@
 		<div style="float:left;width:35%; text-align:left;">
 			<div style="width:80%;height:130px;text-align:left;border-style:solid;border-width:1pt;">
 			<ul id="ul1" style="float:left;width:40%;list-style:none;">
-			<li id="liOne1" >Product</li>
-			<li id="liOne2">PT Zone</li>
-			<li id="liOne3">WeightBand</li>
-			<li id="liOne4">Country</li>
-			<li id="liOne5">GEO Zone</li>
-			<li id="liOne6">TOP</li>
-			<li id="liOne7">Product Type</li>
-			<!-- <li id="liOne7">TOP</li> -->
-			<!-- <li id="liOne3">Product Type</li>-->
+			<li id="liOne1" ><input name="addBox" type="checkbox" value="1"/>Product</li>
+			<li id="liOne2"><input name="addBox" type="checkbox" value="2"/>PT Zone</li>
+			<li id="liOne3"><input name="addBox" type="checkbox" value="3"/>WeightBand</li>
+			<li id="liOne4"><input name="addBox" type="checkbox" value="4"/>Country</li>
+			<li id="liOne5"><input name="addBox" type="checkbox" value="5"/>GEO Zone</li>
+			<li id="liOne6"><input name="addBox" type="checkbox" value="6"/>TOP</li>
+			<li id="liOne7"><input name="addBox" type="checkbox" value="7"/>Product Type</li>
 			</ul>
 			</div>
 		<br /><br />
@@ -130,15 +126,13 @@
 		<div style="float:left;width:30%;text-align:left;">
 		<div style="width:80%;height:130px;text-align:left;border-style:solid;border-width:1pt;">
 			<ul id="ul2" style="float:left;width:40%;"></ul>
-				<li id="liTwo1" style="display:none;">Product</li>
-				<li id="liTwo2" style="display:none;">PT Zone</li>
-				<li id="liTwo3" style="display:none;">WeightBand</li>
-				<li id="liTwo4" style="display:none;">Country</li>
-				<li id="liTwo5" style="display:none;">GEO Zone</li>
-				<li id="liTwo6" style="display:none;">TOP</li>
-				<li id="liTwo7" style="display:none;">Product Type</li>
-				<!-- <li id="liOne7">TOP</li> -->
-				<!-- <li id="liOne3">Product Type</li>-->
+				<li id="liTwo1" style="display:none;"><input name="revBox" type="checkbox" value="1"/>Product</li>
+				<li id="liTwo2" style="display:none;"><input name="revBox" type="checkbox" value="2"/>PT Zone</li>
+				<li id="liTwo3" style="display:none;"><input name="revBox" type="checkbox" value="3"/>WeightBand</li>
+				<li id="liTwo4" style="display:none;"><input name="revBox" type="checkbox" value="4"/>Country</li>
+				<li id="liTwo5" style="display:none;"><input name="revBox" type="checkbox" value="5"/>GEO Zone</li>
+				<li id="liTwo6" style="display:none;"><input name="revBox" type="checkbox" value="6"/>TOP</li>
+				<li id="liTwo7" style="display:none;"><input name="revBox" type="checkbox" value="7"/>Product Type</li>
 			</div>
 		<br /><br />
 		</div>
@@ -243,23 +237,34 @@ $(function() {
     var removeIndex=1;
     
     $("#addLi").click(function(){
-    	if(addIndex>7) return;
-        var addId = "liOne" + addIndex;
-        var removeId = "liTwo" + addIndex;
-    	document.getElementById(addId).style.cssText="display:none;";
-    	document.getElementById(removeId).style.cssText="display:block;";
-    	addIndex++;
-    	removeIndex=1;
+    	 var str="";
+	   	 $("input[name='addBox']:checked").each(function(){ 
+	   	 str += $(this).val()+"," ;
+	   	 $(this).attr('checked',false );
+	   	 });
+	   	 var strs = str.split(",");
+	   	 for(var i=0;i<strs.length;i++){
+	   		var addId = "liOne" + strs[i];
+	        var removeId = "liTwo" + strs[i];
+	    	document.getElementById(addId).style.cssText="display:none;";
+	    	document.getElementById(removeId).style.cssText="display:block;";
+	   	 }
     });
     
     $("#removeLi").click(function(){
-    	if(removeIndex>7) return;
-    	var addId = "liOne" + removeIndex;
-        var removeId = "liTwo" + removeIndex;
-    	document.getElementById(addId).style.cssText="display:block;";
-    	document.getElementById(removeId).style.cssText="display:none;";
-    	removeIndex++;
-    	addIndex=1;
+    	var str="";
+	   	 $("input[name='revBox']:checked").each(function(){ 
+	   	 str += $(this).val()+"," ;
+	   	 $(this).attr('checked',false );
+	   	 });
+	   	 var strs = str.split(",");
+	   	 for(var i=0;i<strs.length;i++){
+	   		var addId = "liOne" + strs[i];
+	        var removeId = "liTwo" + strs[i];
+	    	document.getElementById(addId).style.cssText="display:block;";
+	    	document.getElementById(removeId).style.cssText="display:none;";
+	   	}
+	   	$("input[name='addBox']").attr("checked",false); 
     });
     
     $("#Caculate").click(function(){
@@ -271,7 +276,7 @@ $(function() {
     });
     
     $("#Export").click(function(){
-    	var multichoised = "";
+    	var multichoised = ""+",";
     	var liSelected = $("#ul1 li:hidden");
     	if(liSelected.length==0){
     		alert('Please select the Analysis Fields first! ');return;

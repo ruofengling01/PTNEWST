@@ -15,9 +15,7 @@
 		.tab tr td {font-size:12px;
 					align:left;
 			}	
-	
 		</style>
-
 <body>
 <form action="#">
 <div style="padding:5px;">
@@ -39,7 +37,7 @@
     </tr>
     <tr>
       <td>Origin Depot :</td>
-      <td>SHA	</td>
+      <td>${business.depotCode}	</td>
       <td>Average Weight per Consignment :</td>
       <td></td>
     </tr>
@@ -51,10 +49,10 @@
   <b>Loading Details</b>
   <table>
     <tr>
-      <td width="20%">Division :</td>
-      <td width="40%">G</td>
-      <td width="15%">RateCategory :</td>
-      <td>07PTO</td>
+      <td  width="20%">Division :</td>
+      <td  width="40%">G</td>
+      <td  width="20%">RateCategory :</td>
+      <td>CN4PT</td>
     </tr>
     <tr>
       <td>Approval Date :</td>
@@ -93,8 +91,8 @@
  <c:if test="${flag=='Both'}">
 	<div style="padding:0;" id="tabsI">
 	  <ul>
-	    <li><a href="#" onclick="tabPageControl(0)" title="Sender Pay"><span>Sender Pay</span></a></li>
-	    <li><a href="#" onclick="tabPageControl(1)" title="Recieve Pay"><span>Recieve Pay</span></a></li>
+	    <li><a href="#" onclick="tabPageControl(0)" title="Sender Pay" id="sp" class="activeBack"><span id="sps" class="activeSpan">Sender Pay</span></a></li>
+	    <li><a href="#" onclick="tabPageControl(1)" title="Recieve Pay" id="rp"><span id="rps">Recieve Pay</span></a></li>
 	  </ul>
 	</div>
 </c:if>
@@ -102,10 +100,10 @@
 <div style="padding:5px;" id="tabPagesContainer">
 <div class="tabPageSelected" id="sedDIV">
 	<div style="padding:0;" id="tabsI">
-	  <ul>
-	    <li><a href="#" onclick="tabControl(0)" title="Discount Profile"><span>Discount Profile</span></a></li>
-	    <li><a href="#" onclick="tabControl(1)" title="Heavy Weight Rate"><span>Heavy Weight Rate</span></a></li>
-	    <li><a href="#" onclick="tabControl(2)" title="Consignment Profile"><span>Consignment Profile</span></a></li>
+	  <ul id="nav">
+	    <li><a href="#" onclick="tabControl(0)" title="Discount Profile"  id="a0" class="activeBack"><span id="s0" class="activeSpan">Discount Profile</span></a></li>
+	    <li><a href="#" onclick="tabControl(1)" title="Heavy Weight Rate" id="a1"><span id="s1">Heavy Weight Rate</span></a></li>
+	    <li><a href="#" onclick="tabControl(2)" title="Consignment Profile" id="a2"><span id="s2">Consignment Profile</span></a></li>
 	  </ul>
 	</div>
 <div class="tabPageSelected" id="disDIV">
@@ -390,9 +388,9 @@
 <div class="tabPageUnSelected" id="recDIV">
 	<div style="padding:0;" id="tabsI">
 	  <ul>
-	    <li><a href="#" onclick="tabControlRec(0)" title="Discount Profile"><span>Discount Profile</span></a></li>
-	    <li><a href="#" onclick="tabControlRec(1)" title="Heavy Weight Rate"><span>Heavy Weight Rate</span></a></li>
-	    <li><a href="#" onclick="tabControlRec(2)" title="Consignment Profile"><span>Consignment Profile</span></a></li>
+	    <li><a href="#" onclick="tabControlRec(0)" title="Discount Profile" id="aa0"><span id="ss0">Discount Profile</span></a></li>
+	    <li><a href="#" onclick="tabControlRec(1)" title="Heavy Weight Rate" id="aa1"><span id="ss1">Heavy Weight Rate</span></a></li>
+	    <li><a href="#" onclick="tabControlRec(2)" title="Consignment Profile" id="aa2"><span id="ss2">Consignment Profile</span></a></li>
 	  </ul>
 	</div>
 <div class="tabPageSelected" id="disDIVrec">
@@ -689,17 +687,59 @@ function tabPageControl(n) {
 	if(n==1){
 		document.getElementById("recDIV").style.cssText = "display:block;";
 		document.getElementById("sedDIV").style.cssText = "display:none;";
+		document.getElementById("rp").style.cssText = "background-position:0% -42px;";
+		document.getElementById("rps").style.cssText = "background-position:100% -42px;";
+		document.getElementById("sp").style.cssText = "background-position:";
+		document.getElementById("sps").style.cssText = "background-position:";
+		for(var i=0;i<=2;i++){
+			if(i==0){
+				var links= "aa"+i;var sp= "ss"+i;
+				document.getElementById(links).style.cssText = "background-position:0% -42px;";
+				document.getElementById(sp).style.cssText = "background-position:100% -42px;";
+			}else{
+				var links= "aa"+i;var sp= "ss"+i;
+				document.getElementById(links).style.cssText = "background-position:";
+				document.getElementById(sp).style.cssText = "background-position:";
+			}
+		}
 	}else{
 		document.getElementById("sedDIV").style.cssText = "display:block;";
 		document.getElementById("recDIV").style.cssText = "display:none;";
+		document.getElementById("rp").style.cssText = "background-position:";
+		document.getElementById("rps").style.cssText = "background-position:";
+		document.getElementById("sp").style.cssText = "background-position:0% -42px;";
+		document.getElementById("sps").style.cssText = "background-position:100% -42px;";
+		for(var i=0;i<=2;i++){
+			if(i==0){
+				var links= "a"+i;var sp= "s"+i;
+				document.getElementById(links).style.cssText = "background-position:0% -42px;";
+				document.getElementById(sp).style.cssText = "background-position:100% -42px;";
+			}else{
+				var links= "a"+i;var sp= "s"+i;
+				document.getElementById(links).style.cssText = "background-position:";
+				document.getElementById(sp).style.cssText = "background-position:";
+			}
+		}
 	}
 	
 }
 function tabControl(n) {
+	for(var i=0;i<=2;i++){
+		if(i==n){
+			var links= "a"+i;var sp= "s"+i;
+			document.getElementById(links).style.cssText = "background-position:0% -42px;";
+			document.getElementById(sp).style.cssText = "background-position:100% -42px;";
+		}else{
+			var links= "a"+i;var sp= "s"+i;
+			document.getElementById(links).style.cssText = "background-position:";
+			document.getElementById(sp).style.cssText = "background-position:";
+		}
+	}
 	if(n==1){
 		document.getElementById("hwDIV").style.cssText = "display:block;";
 		document.getElementById("disDIV").style.cssText = "display:none;";
 		document.getElementById("conDIV").style.cssText = "display:none;";
+		
 	}else if(n==2){
 		document.getElementById("conDIV").style.cssText = "display:block;";
 		document.getElementById("hwDIV").style.cssText = "display:none;";
@@ -712,6 +752,17 @@ function tabControl(n) {
 }
 
 function tabControlRec(n) {
+	for(var i=0;i<=2;i++){
+		if(i==n){
+			var links= "aa"+i;var sp= "ss"+i;
+			document.getElementById(links).style.cssText = "background-position:0% -42px;";
+			document.getElementById(sp).style.cssText = "background-position:100% -42px;";
+		}else{
+			var links= "aa"+i;var sp= "ss"+i;
+			document.getElementById(links).style.cssText = "background-position:";
+			document.getElementById(sp).style.cssText = "background-position:";
+		}
+	}
 	if(n==1){
 		document.getElementById("hwDIVrec").style.cssText = "display:block;";
 		document.getElementById("disDIVrec").style.cssText = "display:none;";

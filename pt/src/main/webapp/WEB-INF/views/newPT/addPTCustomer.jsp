@@ -36,9 +36,9 @@
   <h4 class="title">New PT-Customer Description</h4>
   <table class="modify">
     <tr>
-      <th>Application Date:</th>
-      <td><span id="appDate"></span></td>
-      <th>Depot:</th>
+      <th width="20%">Application Date:</th>
+      <td width="40%"><span id="appDate"></span></td>
+      <th width="20%">Depot:</th>
       <td>${user.code}<input id="depotCode" type="hidden" name="business.depotCode" value="${user.code}"/></td>
     </tr>
     <tr>
@@ -70,26 +70,26 @@
     <tr>
       <th>Industry</th>
       <td colspan="1">
-      	<select name="customer.industry" >
+      	<select name="customer.industry">
           	<option value="ServiceIndustry(Advertising,Media,Agency,Laws)">ServiceIndustry(Advertising,Media,Agency,Laws)</option>
         </select>
       </td>
     </tr>
     <tr>
       <th>Current Service Provider</th>
-      <td colspan="3"><input type="text" id="serviceProvider" size="100" name="customer.serviceProvider" class="required"/></td>
+      <td colspan="3"><input type="text" id="serviceProvider" size="90" name="customer.serviceProvider" class="required"/></td>
     </tr>
    
   </table>
   <table class="modify">
     <tr>
-      <th rowspan="2">Is the customer on fuel surcharge exemption or deduction now?</th>
-      <td rowspan="2">
+      <th rowspan="2" width="40%">Is the customer on fuel surcharge exemption or deduction now?</th>
+      <td rowspan="2" width="27%">
       	<select name="customer.isFuleDeduction">
          <option value="YES">YES</option>
       	 <option value="NO">NO</option>
         </select></td>
-      <th>the Current fuel surcharge</th>
+      <th width="20%">the Current fuel surcharge</th>
       <td id="fsi">Per FS Index</td>
       <input id="fsi_hidden" type="hidden" name="customer.fuelSurcharge" value="Per FS Index" />
       <input type="hidden" name="customer.reqFuelSurcharge" value="Per FS Index"/>
@@ -113,9 +113,9 @@
 		   <option value="Both">Both</option>
        </select></td>
     </tr>
-    <tr>
-      <th>Is customer a mainly document sender?</th>
-      <td><select  name="business.isDocumentSender">
+    <tr >
+      <th width="40%">Is customer a mainly document sender?</th>
+      <td width="27%"><select  name="business.isDocumentSender">
           <option value="NO">No</option>
           <option value="YES">YES</option>
         </select></td>
@@ -133,10 +133,12 @@
       	</select></td>
       <!---->
     </tr>
+    </table>
+    <table class="modify">
      <tr>
-      <th>Reason for the PT:</th>
-      <td colspan="3">
-      	<textarea style="width:700px; height:100px" name="business.reson" class="required"></textarea>
+      <th width="40%" class="modify">Reason for the PT:</th>
+      <td width="80%">
+      	<textarea style="width:100%; height:100px" name="business.reson" class="required"></textarea>
       </td>
     </tr>
   </table>
@@ -177,6 +179,7 @@ function tothenext(obj){
 }
 $(function(){
     $("#copy").click(function(){
+    	//window.location.href="http://localhost:8090/pt/login/loginin";
     	var cusstr = window.showModalDialog("${ctx}/ptQuery/copy","","dialogWidth=800px;dialogHeight=450px");
     	if(cusstr ==null || cusstr ==undefined){
 	    	alert("pls check one customer on the dialog");
@@ -225,7 +228,7 @@ $(function(){
             contentType:"application/json",   
             success:function(data){
             	//$("#account").val(data.accountNo);
-            	$("#fsi").html(data);
+            	$("#fsi").html(toPercent(data));
             	$("#fsi_hidden").val(data);
             },
             error:function(e) {
@@ -235,6 +238,18 @@ $(function(){
     	
     });
 });
+
+function toPercent(data){
+    var strData = parseFloat(data)*10000;
+    strData = Math.round(strData);
+    strData/=100.00;
+    strData = strData.toString();
+    while (strData.length <= strData.indexOf(".") + 2) {
+    	strData += '0';
+    }
+    var ret = strData.toString()+"%";
+    return ret;
+}
 
 var date = new Date();
 $('#appDate').html(date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate());	

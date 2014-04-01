@@ -44,7 +44,9 @@ response.setDateHeader("Expires", -10);
       <th>PT Application Reference #: </th>
       <td>${business.applicationReference}<input type="hidden" value="${business.applicationReference}" name="business.applicationReference"></td>
       <th>Terms of payments:</th>
-      <td>${payment}<input type="hidden" value="${customer.payment}" name="customer.payment"></td>
+      <td style="background-color:yellow">
+      <span><B>${payment}<input type="hidden" value="${customer.payment}" name="customer.payment"></B></span>
+      </td>
       </tr><tr>
       <th>Zone type:</th>
       <td colspan="3">

@@ -84,7 +84,9 @@ response.setDateHeader("Expires", -10);
       <th>PT Application Reference #: </th>
       <td>${business.applicationReference}<input type="hidden" value="${business.applicationReference}" name="business.applicationReference"></td>
       <th>Terms of payments:</th>
-      <td>${payment}<input type="hidden" value="${customer.payment}" name="customer.payment"></td>
+      <td style="background-color:yellow">
+      <span><B>${payment}<input type="hidden" value="${customer.payment}" name="customer.payment"></B></span>
+      </td>
       </tr>
   </table>
   </div>
@@ -98,7 +100,7 @@ response.setDateHeader("Expires", -10);
 <table class="table_B" width="100%">
         <thead>
 						<tr align="center">
-                <th colspan="14" style="text-align:left;">Discounts Profile- 15D/12D/10D/09D(% off full tariff)</th>
+                <th colspan="14" style="text-align:left;">Consignment Profile- 15D/12D/10D/09D - Number of Consignment per Month</th>
             </tr>
             <tr>
                 <th>Weightband</th>
@@ -113,7 +115,7 @@ response.setDateHeader("Expires", -10);
 					<td>${weightBand.name}</td>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-							<td><input id="zg_${key}_${business.id}" name="zg_${key}_${business.id}"  size="4" 
+							<td><input onfocusout="doValidate(this)" id="zg_${key}_${business.id}" name="zg_${key}_${business.id}"  size="4" 
 							value="<c:choose><c:when test="${consignmentMap[key] == null}">0</c:when><c:otherwise>${consignmentMap[key]}</c:otherwise></c:choose>" size="4"/></td>
 				   </c:forEach>
 			   </tr>
@@ -124,7 +126,7 @@ response.setDateHeader("Expires", -10);
 <table class="table_B" width="100%">
         <thead>
 						<tr align="center">
-                <th colspan="14" style="text-align:left;">Discounts Profile- 15N/12N/10N/09N(% off full tariff)</th>
+                <th colspan="14" style="text-align:left;">Consignment Profile- 15N/12N/10N/09N - Number of Consignment per Month</th>
             </tr>
             <tr>
                 <th>Weightband</th>
@@ -139,7 +141,7 @@ response.setDateHeader("Expires", -10);
 					<td>${weightBand.name}</td>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-							<td><input id="zg_${key}_${business.id}" name="zg_${key}_${business.id}"  size="4" 
+							<td><input onfocusout="doValidate(this)" id="zg_${key}_${business.id}" name="zg_${key}_${business.id}"  size="4" 
 							value="<c:choose><c:when test="${consignmentMap[key] == null}">0</c:when><c:otherwise>${consignmentMap[key]}</c:otherwise></c:choose>" size="4"/></td>
 				   </c:forEach>
 			   </tr>
@@ -150,7 +152,7 @@ response.setDateHeader("Expires", -10);
 <table class="table_B" width="100%">
         <thead>
 						<tr align="center">
-                <th colspan="14" style="text-align:left;">Discounts Profile- 48N(% off full tariff)</th>
+                <th colspan="14" style="text-align:left;">Consignment Profile- 48N - Number of Consignment per Month</th>
             </tr>
             <tr>
                 <th >Weightband</th>
@@ -165,7 +167,7 @@ response.setDateHeader("Expires", -10);
 					<td>${weightBand.name}</td>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<td><input id="zg_${key}_${business.id}" name="zg_${key}_${business.id}" 
+						<td><input onfocusout="doValidate(this)" id="zg_${key}_${business.id}" name="zg_${key}_${business.id}" 
 value="<c:choose><c:when test="${consignmentMap[key] == null}">0</c:when><c:otherwise>${consignmentMap[key]}</c:otherwise></c:choose>" size="4"/></td>
 				   </c:forEach>
 			   </tr>
@@ -198,6 +200,22 @@ value="<c:choose><c:when test="${consignmentMap[key] == null}">0</c:when><c:othe
 </form>
 </div>
 <script type="text/javascript">
+	function doValidate(obj){
+		if(obj.value== ''){
+			obj.value=0;
+		}
+		//if(!isNum(obj.value)){
+			//alert("Pls key a number!");
+			//obj.focus();
+		//}
+	}
+
+	//验证是否为数字
+	function isNum(str){
+		var v4 =  new RegExp("^[0-9]+\.{0,1}[0-9]{0,2}$");
+		return v4.test(str);
+	}
+
 	$(function(){
 		 $("#Back").click(function(){
 			 if($('#isFollow').val()=='NO'&&$('#payment').val()=='<%=PTPARAMETERS.PAYMENT[1]%>'){
@@ -283,7 +301,7 @@ value="<c:choose><c:when test="${consignmentMap[key] == null}">0</c:when><c:othe
                 	$("#totalRev").val(data);
                 },
                 error:function(e) {
-                    alert("error："+e);
+                    alert("error："+e.responseText);
                 }
             });
         });

@@ -29,7 +29,7 @@
 	</select>
 	
 	<select id="getItemNum" parameterType="map" resultType="String">
-		 select items_num from dms.t_chr_weight_def_val where weight_band_from &lt;= #{chargeableweight} and weight_band_to &gt; #{chargeableweight} 
+		 select items_num from dms.t_chr_weight_def_val where #{chargeableweight} between weight_band_from and weight_band_to
 		 and dest_country = #{countryCode}
 	</select>
 	

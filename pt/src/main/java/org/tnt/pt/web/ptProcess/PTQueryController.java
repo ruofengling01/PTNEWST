@@ -359,7 +359,6 @@ public class PTQueryController{
 		}
 		if(user!=null&&(user.getRole_name().equals(PTPARAMETERS.ROLE_NAME[0])||
 				user.getRole_name().equals(PTPARAMETERS.ROLE_NAME[4]))){//sales 或者bsm 则显示对应depot
-			businessVO.setDepot(user.getCode());
 			depotList.add(user.getCode());
 		}
 		if(user!=null&&(user.getRole_name().equals(PTPARAMETERS.ROLE_NAME[2])||
@@ -367,16 +366,11 @@ public class PTQueryController{
 				user.getRole_name().equals(PTPARAMETERS.ROLE_NAME[5])){//显示所有depot
 			depotList = accountService.getAllDepots(user.getUserName());
 		}
-		if(depotList.size()>1){
-			depotList.add("All");
-		}else{
-			businessVO.setDepot(user.getCode());
-		}
 		businessList = businessService.getBusinessByBusiness(businessVO);
 		model.addAttribute("businessList", businessList);
 		model.addAttribute("depotList", depotList);
 		model.addAttribute("statusList",statusList);
-		businessVO.setStartDate(null);businessVO.setDepot("All");
+		businessVO.setStartDate(null);
 		model.addAttribute("model", businessVO);
 		return "query/queryPT";
 	}
@@ -397,13 +391,11 @@ public class PTQueryController{
 		for(String status:PTPARAMETERS.PROCESS_SATE){
 			statusList.add(status);
 		}
-		depotList = bsmRgmService.getDepotByName(user.getUserName());
 		if(user!=null&&user.getRole_name().equals(PTPARAMETERS.ROLE_NAME[1])){//区域经理则展示区域内depot
 			depotList = bsmRgmService.getDepotByName(user.getUserName());
 		}
 		if(user!=null&&(user.getRole_name().equals(PTPARAMETERS.ROLE_NAME[0])||
 				user.getRole_name().equals(PTPARAMETERS.ROLE_NAME[4]))){//sales 或者bsm 则显示对应depot
-			businessVO.setDepot(user.getCode());
 			depotList.add(user.getCode());
 		}
 		if(user!=null&&(user.getRole_name().equals(PTPARAMETERS.ROLE_NAME[2])||
@@ -411,16 +403,10 @@ public class PTQueryController{
 				user.getRole_name().equals(PTPARAMETERS.ROLE_NAME[5])){//显示所有depot
 			depotList = accountService.getAllDepots(user.getUserName());
 		}
-		if(depotList.size()>1){
-			depotList.add("All");
-		}
 		businessList = businessService.getBusinessByBusiness(businessVO);
 		model.addAttribute("businessList", businessList);
 		model.addAttribute("depotList", depotList);
 		model.addAttribute("statusList",statusList);
-		if(businessVO.getDepot().equals("")){
-			businessVO.setDepot("All");
-		}
 		model.addAttribute("model",businessVO);
 		return "query/queryPT";
 	}
@@ -486,18 +472,9 @@ public class PTQueryController{
 		User user = (User) request.getSession().getAttribute("user");
 		List<String> depotList = new ArrayList<String>();
 		depotList = accountService.getAllDepots(user.getUserName());
-		if(depotList.size()>0){
-			depotList.add("All");
-		}
-		if(businessVO.getDepot().equals("All")){
-			businessVO.setDepot("");
-		}
 		businessVO.setState(PTPARAMETERS.PROCESS_SATE[2]);
 		businessList = businessService.getBusinessByBusiness(businessVO);
 		model.addAttribute("businessList", businessList);
-		if(businessVO.getDepot().equals("")){
-			businessVO.setDepot("All");
-		}
 		model.addAttribute("model", businessVO);
 		model.addAttribute("depotList", depotList);
 		return "query/modifyCommercial";
@@ -515,15 +492,9 @@ public class PTQueryController{
 		User user = (User) request.getSession().getAttribute("user");
 		List<String> depotList = new ArrayList<String>();
 		depotList = accountService.getAllDepots(user.getUserName());
-		if(depotList.size()>0){
-			depotList.add("All");
-		}else{
-			businessVO.setDepot(user.getCode());
-		}
 		businessVO.setState(PTPARAMETERS.PROCESS_SATE[2]);
 		businessList = businessService.getBusinessByBusiness(businessVO);
 		model.addAttribute("businessList", businessList);
-		businessVO.setDepot("All");
 		model.addAttribute("model", businessVO);
 		model.addAttribute("depotList", depotList);
 		return "query/modifyCommercial";
@@ -612,17 +583,10 @@ public class PTQueryController{
 			depotList = bsmRgmService.getDepotByName(user.getUserName());
 		}
 		if(user!=null&&(user.getRole_name().equals(PTPARAMETERS.ROLE_NAME[0]))){//bsm 则显示对应depot
-			businessVO.setDepot(user.getCode());
 			depotList.add(user.getCode());
-		}
-		if(depotList.size()>1){
-			depotList.add("All");
-		}else{
-			businessVO.setDepot(user.getCode());
 		}
 		businessList = businessService.getBusinessByUser(user,businessVO);
 		model.addAttribute("businessList", businessList);
-		businessVO.setDepot("All");
 		model.addAttribute("model",businessVO);
 		model.addAttribute("depotList", depotList);
 		return "ptProcess/approvePT";
@@ -643,15 +607,10 @@ public class PTQueryController{
 			depotList = bsmRgmService.getDepotByName(user.getUserName());
 		}
 		if(user!=null&&(user.getRole_name().equals(PTPARAMETERS.ROLE_NAME[0]))){//bsm 则显示对应depot
-			businessVO.setDepot(user.getCode());
 			depotList.add(user.getCode());
 		}
 		businessList = businessService.getBusinessByUser(user,businessVO);
 		model.addAttribute("businessList", businessList);
-		if(businessVO.getDepot().equals("")){
-			depotList.add("All");
-			businessVO.setDepot("All");
-		}
 		model.addAttribute("model",businessVO);
 		model.addAttribute("depotList", depotList);
 		return "ptProcess/approvePT";

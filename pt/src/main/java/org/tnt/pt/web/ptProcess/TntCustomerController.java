@@ -44,7 +44,7 @@ public class TntCustomerController {
 	@ResponseBody
 	public String getFsi(Model model,@PathVariable("accountNo") String accountNo
 			,@PathVariable("code") String code) {
-		Double fsi = fsiService.getFsi("000009305", "SHA");
+		Double fsi = fsiService.getFsi(accountNo, code);
 		System.out.println(fsi);
 		String fsiStr = fsi+"";
 		return fsiStr;

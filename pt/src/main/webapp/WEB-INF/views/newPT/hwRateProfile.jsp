@@ -53,8 +53,9 @@ response.setDateHeader("Expires", -10);
 	        var inputArr = weightBandids.split(";");
 	        var appendTr = '';
         	for(var m=0; m < inputArr.length-1; m++){
-				appendTr +="<td><input type='text' name='"+id+"_"+inputArr[m]+"_${business.id}_"+productid+"_"+_len+"'  id='"+id+"_"+inputArr[m]+"_"+_len+"'/></td>"
+				appendTr +="<td><input type='text' name='"+id+"_"+inputArr[m]+"_${business.id}_"+productid+"_"+_len+"'  id='"+id+"_"+inputArr[m]+"_"+_len+"' onfocusout=\"doValidate(this)\"/></td>"
 			}
+        
         	 $("#"+id).append("<tr id='"+id+"_"+_len+"' align='center'>"
 					   +"<td><input type='text' name='"+id+"_country_name_"+_len+"'  id='"+id+"_country_name_"+_len+"' onkeyup=\"new Customer('"+id+"',"+_len+",'"+type+"').show(this)\"/></td>" //<input type='hidden' name='"+id+"_country_id_"+_len+"'  id='"+id+"_country_id_"+_len+"'/>
 					   + appendTr
@@ -90,7 +91,9 @@ response.setDateHeader("Expires", -10);
       <th>PT Application Reference #: </th>
       <td>${business.applicationReference}<input type="hidden" value="${business.applicationReference}" name="business.applicationReference"></td>
       <th>Terms of payments:</th>
-      <td>${payment}<input type="hidden" value="${customer.payment}" name="customer.payment"></td>
+      <td style="background-color:yellow">
+      <span><B>${payment}<input type="hidden" value="${customer.payment}" name="customer.payment"></B></span>
+      </td>
       </tr>
   </table>
   </div>
@@ -114,11 +117,11 @@ response.setDateHeader("Expires", -10);
         	<c:forEach items="${ndocumentCountrys}" var="country" varStatus="co">
 				<tr id='tb1_${co.index}' align="center">
 					<td>
-					<input type='text' value="${country.countryCode}" name='tb1_country_name_${co.index}'  id='tb1_country_name_${co.index}' onclick="new Customer('tb1',${co.index},'15D').show(this)"/>
+					<input type='text' value="${country.countryCode}" name='tb1_country_name_${co.index}'  id='tb1_country_name_${co.index}'  onclick="new Customer('tb1',${co.index},'15D').show(this)"/>
 					</td>
 					<c:forEach items="${ndocumentList}" var="weightBand" begin="0">
 							<c:set var="key">${business.id}_${ndocument}_${weightBand.id}_${country.id}</c:set>
-						    <td><input  name="tb1_${weightBand.id}_${business.id}_${ndocument}_${co.index}" value="${hwRateMap[key]}"/></td>
+						    <td><input type="text" name="tb1_${weightBand.id}_${business.id}_${ndocument}_${co.index}" value="${hwRateMap[key]}"/></td>
 				   </c:forEach>
 				    <td><a href='#' onclick="deltr('tb1',${co.index})">删除</a></td>
 			   </tr>
@@ -155,7 +158,7 @@ response.setDateHeader("Expires", -10);
 					</td>
 					<c:forEach items="${eonomyList}" var="weightBand" begin="0">
 							<c:set var="key">${business.id}_${eonomy}_${weightBand.id}_${country.id}</c:set>
-						    <td><input  name="tb2_${weightBand.id}_${business.id}_${eonomy}_${co.index}" value="${hwRateMap[key]}"/></td>
+						    <td><input type="text"  name="tb2_${weightBand.id}_${business.id}_${eonomy}_${co.index}" value="${hwRateMap[key]}" /></td>
 				   </c:forEach>
 				    <td><a href='#' onclick="deltr('tb2',${co.index})">删除</a></td>
 			   </tr>
@@ -180,6 +183,25 @@ response.setDateHeader("Expires", -10);
 </form>
 </div>
 <script type="text/javascript">
+	 
+	function doValidate(obj){
+		if(obj.value.indexOf('.')!=-1){
+			if(obj.value.length > obj.value.indexOf('.')+3){
+				alert("pls enter up to two decimal places !");
+				obj.focus();
+			}
+		}
+		if(obj.value==''){
+			alert("Pls key a number or delete this line !");
+		}
+	}
+	
+	//验证是否为数字
+	function isNum(str){
+		var v4 =  new RegExp("^[0-9]+\.{0,1}[0-9]{0,2}$");
+		return v4.test(str);
+	}
+	
 	$(function(){
 		 $("#Back").click(function(){
 			 if($('#isFollow').val()=='NO'&&$('#payment').val()=='<%=PTPARAMETERS.PAYMENT[1]%>'){
@@ -199,40 +221,52 @@ response.setDateHeader("Expires", -10);
         	//$("#hwRateProfile").attr('action',"${ctx}/ptCreate/consProfile");
         	//$("#hwRateProfile").submit();
         	 //序列化表单元素，返回json数据
-            var params = $(".table_B").find("input").serializeArray();
-             var jsonString = O2String(params);
-             if(jsonString.length>2){
-	             $.ajax({
-	                 type:"POST",
-	                 url:"${ctx}/ptCreate/addHwRate/${payment}",
-	                 dataType:"json",      
-	                 contentType:"application/json",   
-	                 data:jsonString,
-	                 success:function(data){
-	                	 if($('#isFollow').val()=='NO'&&$('#payment').val()=='<%=PTPARAMETERS.PAYMENT[0]%>'){
-	                 		$("#hwRateProfile").attr('action',"${ctx}/ptCreate/hwRateProfile");
-	                 		$("#hwRateProfile").submit();
-	                 	}else{
-	                 		$('#payment').val('');
-		                 	$("#hwRateProfile").attr('action',"${ctx}/ptCreate/consProfile/hw");
-		                 	$("#hwRateProfile").submit();
-	                 	}
-	                 },
-	                 error:function(e) {
-	                     alert("error："+e);
-	                 }
-	             });
-             }else{
-            	 if($('#isFollow').val()=='NO'&&$('#payment').val()=='<%=PTPARAMETERS.PAYMENT[0]%>'){
-              		$("#hwRateProfile").attr('action',"${ctx}/ptCreate/hwRateProfile");
-              		$("#hwRateProfile").submit();
-              	}else{
-              		$('#payment').val('');
-	                $("#hwRateProfile").attr('action',"${ctx}/ptCreate/consProfile/hw");
-	                $("#hwRateProfile").submit();
-              	}
-             }
+        	var flag = true;
+        	$(".table_B").find("input[type='text']").each(function(){
+        	    if(this.value ==""&& flag){
+        	    	flag = false;
+        	    	alert("Pls key a number or delete this line !");
+        	    	return;
+        	    }
+       		});
+        	//假如有一个为空，则不能通过
+        	if(flag){
+	             var params = $(".table_B").find("input").serializeArray();
+	             var jsonString = O2String(params);
+	             if(jsonString.length>2){
+		             $.ajax({
+		                 type:"POST",
+		                 url:"${ctx}/ptCreate/addHwRate/${payment}",
+		                 dataType:"json",      
+		                 contentType:"application/json",   
+		                 data:jsonString,
+		                 success:function(data){
+		                	 if($('#isFollow').val()=='NO'&&$('#payment').val()=='<%=PTPARAMETERS.PAYMENT[0]%>'){
+		                 		$("#hwRateProfile").attr('action',"${ctx}/ptCreate/hwRateProfile");
+		                 		$("#hwRateProfile").submit();
+		                 	}else{
+		                 		$('#payment').val('');
+			                 	$("#hwRateProfile").attr('action',"${ctx}/ptCreate/consProfile/hw");
+			                 	$("#hwRateProfile").submit();
+		                 	}
+		                 },
+		                 error:function(e) {
+		                     alert("error："+e);
+		                 }
+		             });
+	             }else{
+	            	 if($('#isFollow').val()=='NO'&&$('#payment').val()=='<%=PTPARAMETERS.PAYMENT[0]%>'){
+	              		$("#hwRateProfile").attr('action',"${ctx}/ptCreate/hwRateProfile");
+	              		$("#hwRateProfile").submit();
+	              	}else{
+	              		$('#payment').val('');
+		                $("#hwRateProfile").attr('action',"${ctx}/ptCreate/consProfile/hw");
+		                $("#hwRateProfile").submit();
+	              	}
+	             }
+        	 }
         });
+        
     });
      
 	

@@ -27,67 +27,64 @@
   <h4 class="title">New PT-Customer Description</h4>
   <table class="modify">
     <tr>
-   	 <input  type="hidden" name="business.id" value="${business.id}"/>
-   	 <input  type="hidden" name="customer.id" value="${customer.id}"/>
-   	 <input  type="hidden" name="business.zoneType" value="${business.zoneType}"/>
-   	
-      <th>Application Date:</th>
-      <td><span id="appDate"><fmt:formatDate value="${business.applicationDate}" pattern="yyyy-MM-dd" /></span></td>
-      <th>Depot:</th>
-      <td>${business.depotCode}<input  id="depotCode" type="hidden" name="business.depotCode" value="${business.depotCode}"/></td>
+      <th width="20%">Application Date:</th>
+      <td width="40%"><span id="appDate"></span></td>
+      <th width="20%">Depot:</th>
+      <td>${user.code}<input id="depotCode" type="hidden" name="business.depotCode" value="${user.code}"/></td>
     </tr>
     <tr>
       <th>A new PT Customer?</th>
       <td><select name="business.isNewCus" >
-      		<option value="YES" <c:if test="${business.isNewCus eq 'YES'}">selected</c:if> >YES</option>
-      		<option value="NO"  <c:if test="${business.isNewCus eq 'NO'}">selected</c:if> >NO</option>
+      	<option value="YES">YES</option>
+      	<option value="NO">NO</option>
       	</select>	
       </td>
       <th>Territory:</th>
-      <td><input type="text"  name="business.territory"  value="${business.territory}" class="required"/></td>
+      <td><input type="text" id="territory" name="business.territory" class="required"/></td>
     </tr>
     <tr>
       <th>Account #:</th>
-      <td><input type="text"  id="account" name="customer.account" value="${customer.account}" class="required"/><span style="background-color:yellow">("777777777"refer to new customer)</span></td>
-       <th>Telephone:</th>
-      <td><input type="text"  name="business.telPhone" class="required" value="${business.telPhone}"/></td>
+      <td><input type="text"  id="account" name="customer.account" class="required" maxlength="9"/><span style="background-color:yellow">("777777777"refer to new customer)</span></td>
+      <th>Telephone:</th>
+      <td><input type="text"  name="business.telPhone" class="required"/></td>
     </tr>
     <tr>
       <th>Customer Name</th>
-      <td><input type="text" id="cusName" name="customer.cusName"  value="${customer.cusName}" class="required" size="90"/></td>
+      <td><input type="text" id="cusName" name="customer.cusName" class="required" size="90"/></td>
       <th>Channel:</th>
-      <td><select name="customer.channel" >
-          <option value="TSM" <c:if test="${customer.channel eq 'TSM'}">selected</c:if>>TSM</option>
-        </select></td>
+      <td>
+      	  <select name="customer.channel" id="channel">
+          		<option value="TSM">TSM</option>
+          </select>
+      </td>
     </tr>
     <tr>
       <th>Industry</th>
       <td colspan="1">
-      	<select name="customer.industry" >
-          <option value="ServiceIndustry(Advertising,Media,Agency,Laws)" <c:if test="${customer.industry eq 'ServiceIndustry(Advertising,Media,Agency,Laws)'}">selected</c:if>>
-          	ServiceIndustry(Advertising,Media,Agency,Laws)
-          </option>
-        </select></td>
+      	<select name="customer.industry">
+          	<option value="ServiceIndustry(Advertising,Media,Agency,Laws)">ServiceIndustry(Advertising,Media,Agency,Laws)</option>
+        </select>
+      </td>
     </tr>
     <tr>
       <th>Current Service Provider</th>
-      <td colspan="3"><input type="text" size="100" id="serviceProvider" name="customer.serviceProvider" value="${customer.serviceProvider}" class="required"/></td>
+      <td colspan="3"><input type="text" id="serviceProvider" size="90" name="customer.serviceProvider" class="required"/></td>
     </tr>
    
   </table>
   <table class="modify">
     <tr>
-      <th rowspan="2">Is the customer on fuel surcharge exemption or deduction now?</th>
-      <td rowspan="2">
+      <th rowspan="2" width="40%">Is the customer on fuel surcharge exemption or deduction now?</th>
+      <td rowspan="2" width="27%">
       	<select name="customer.isFuleDeduction">
-         <option value="YES" <c:if test="${customer.isFuleDeduction eq 'YES'}">selected</c:if>>YES</option>
-      	 <option value="NO" <c:if test="${customer.isFuleDeduction eq 'NO'}">selected</c:if>>NO</option>
+         <option value="YES">YES</option>
+      	 <option value="NO">NO</option>
         </select></td>
-      <th>the Current fuel surcharge</th>
-      <td id="fsi">${customer.fuelSurcharge}
-      <input id="fsi_hidden" type="hidden" name="customer.fuelSurcharge" value="${customer.fuelSurcharge}"/>
-      <input type="hidden" name="customer.reqFuelSurcharge" value="${customer.reqFuelSurcharge}"/>
-      <input type="hidden" name="customer.isReq" value="${customer.isReq}"/></td>
+      <th width="20%">the Current fuel surcharge</th>
+      <td id="fsi">Per FS Index</td>
+      <input id="fsi_hidden" type="hidden" name="customer.fuelSurcharge" value="Per FS Index" />
+      <input type="hidden" name="customer.reqFuelSurcharge" value="Per FS Index"/>
+      <input type="hidden" name="customer.isReq" value="NO"/>
     </tr><%--
     <tr>
      
@@ -102,33 +99,37 @@
       <th style="background-color:yellow"><span><B> Terms  of  Payments:</B></span></th>
       <td colspan="3">
 	  <select id="tp" name="customer.payment">
-           <option value="SenderPay" <c:if test="${customer.payment eq 'SenderPay'}">selected</c:if>>SenderPay</option>
-		   <option value="ReceivePay" <c:if test="${customer.payment eq 'ReceivePay'}">selected</c:if> >ReceivePay</option>
-		   <option value="Both" <c:if test="${customer.payment eq 'Both'}">selected</c:if> >Both</option>
+           <option value="SenderPay">SenderPay</option>
+		   <option value="ReceivePay">ReceivePay</option>
+		   <option value="Both">Both</option>
        </select></td>
     </tr>
-    <tr>
-      <th>Is customer a mainly document sender?</th>
-      <td><select  name="business.isDocumentSender">
-          <option value="NO"  <c:if test="${business.isDocumentSender eq 'NO'}">selected</c:if>>No</option>
-          <option value="YES"  <c:if test="${business.isDocumentSender eq 'YES'}">selected</c:if>>YES</option>
+    <tr >
+      <th width="40%">Is customer a mainly document sender?</th>
+      <td width="27%"><select  name="business.isDocumentSender">
+          <option value="NO">No</option>
+          <option value="YES">YES</option>
         </select></td>
       <th>Cons/Stop</th>
-      <td><input type="text"  name="business.consStop" value="${business.consStop}" class="required number"></td>
+      <td><input type="text"  name="business.consStop" class="required number"></td>
     </tr>
      <tr>
       <th>Prdouct Description(eg:digital cameral)</th>
-      <td colspan="1"><input type="text" value="Test DC"  name="business.description" value="${business.description}" class="required"></td>
+      <td colspan="1"><input type="text" name="business.description" class="required"></td>
+       
       <th style="display:none">Weight Range</th>
       <td style="display:none"><select name="business.weightRange">
-      	<option value="1" <c:if test="${business.weightRange eq '1'}">selected</c:if>>0.5-5kg</option>
-      	<option value="2" <c:if test="${business.weightRange eq '2'}">selected</c:if>>5-10kg</option>
+      	<option value="1">0.5-5kg</option>
+      	<option value="2">5-10kg</option>
       	</select></td>
+      <!---->
     </tr>
+    </table>
+    <table class="modify">
      <tr>
-      <th>Reason for the PT:</th>
-      <td colspan="3">
-      	<textarea style="width:700px; height:100px" name="business.reson" class="required">${business.reson}</textarea>
+      <th width="40%" class="modify">Reason for the PT:</th>
+      <td width="80%">
+      	<textarea style="width:100%; height:100px" name="business.reson" class="required"></textarea>
       </td>
     </tr>
   </table>
@@ -169,6 +170,7 @@ function tothenext(obj){
 }
 
 $(function(){
+
     $("#copy").click(function(){
     	var cusstr = window.showModalDialog("${ctx}/ptQuery/copy","","dialogWidth=800px;dialogHeight=450px");
     	if(cusstr ==null || cusstr ==undefined){
@@ -217,7 +219,7 @@ $(function(){
             contentType:"application/json",   
             success:function(data){
             	//$("#account").val(data.accountNo);
-            	$("#fsi").html(data);
+            	$("#fsi").html(toPercent(data));
             	$("#fsi_hidden").val(data);
             },
             error:function(e) {
@@ -225,8 +227,20 @@ $(function(){
             }
         });
     });
+    $("#fsi").html(toPercent($("#fsi_hidden").val()));
 });
 
+function toPercent(data){
+    var strData = parseFloat(data)*10000;
+    strData = Math.round(strData);
+    strData/=100.00;
+    strData = strData.toString();
+    while (strData.length <= strData.indexOf(".") + 2) {
+    	strData += '0';
+    }
+    var ret = strData.toString()+"%";
+    return ret;
+}
 var date = new Date();
 $('#appDate').html(date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate());	
 </script>

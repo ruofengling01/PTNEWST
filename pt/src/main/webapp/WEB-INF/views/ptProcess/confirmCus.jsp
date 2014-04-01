@@ -33,7 +33,7 @@
       <th>Application Date:</th>
       <td><span id="appDate"><fmt:formatDate value="${business.applicationDate}" pattern="yyyy-MM-dd"/></span></td>
       <th>Depot:</th>
-      <td>SHA<input  type="hidden" name="business.depotCode" value="SHA"/></td>
+      <td>${business.depotCode}</td>
     </tr>
     <tr>
       <th>A new PT Customer?</th>
@@ -107,7 +107,7 @@
       <th>Divison</th>
       <td><input type="text" value="G"/></td>
       <th width="15%">Rate Category</th>
-      <td><input type="text" value="CN4PT"/></td>
+      <td>CN4PT</td>
     </tr>
 	<tr>
       <th>Effective Date: </th>
@@ -141,7 +141,7 @@ document.getElementById('effDate').value=date.getFullYear()+'-'+(date.getMonth()
 
 function downLoadPdf(){
 	var id = document.getElementById("hiddenID").value
-    document.forms[0].action="${ctx}/documentDown/downDocument2/"+id;
+    document.forms[0].action="${ctx}/documentDown/downDocument/"+id;
 	document.forms[0].submit();
 }
 

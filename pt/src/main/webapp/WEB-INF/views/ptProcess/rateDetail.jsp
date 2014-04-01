@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="java.util.Map" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -59,7 +60,7 @@
 					<td>${tariffGroup.weight}</td>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 					    <c:set var="key">${tariffGroup.id}_${zoneGroup.id}</c:set>
-						<td>${rateMap[key]}</td>	
+						<td><fmt:formatNumber pattern="#.00">${rateMap[key]}</fmt:formatNumber></td>	
 				   </c:forEach>
 			   </tr>
 			</c:forEach>
@@ -84,7 +85,7 @@
 					<td>${tariffGroup.weight}</td>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 					    <c:set var="key">${tariffGroup.id}_${zoneGroup.id}</c:set>
-						<td>${rateMap[key]}</td>	
+						<td><fmt:formatNumber pattern="#.00">${rateMap[key]}</fmt:formatNumber></td>	
 				   </c:forEach>
 			   </tr>
 			</c:forEach>
@@ -109,34 +110,14 @@
 					<td>${tariffGroup.weight}</td>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 					    <c:set var="key">${tariffGroup.id}_${zoneGroup.id}</c:set>
-						<td>${rateMap[key]}</td>	
+						<td><fmt:formatNumber pattern="#.00">${rateMap[key]}</fmt:formatNumber></td>	
 				   </c:forEach>
 			   </tr>
 			</c:forEach>
           </tbody>
 </table>
 <br>
-<%--<table class="table_B" width="50%" align="left">
-        <thead>
-			<tr align="center">
-                <th colspan="6" style="text-align:left;">Global Express - Non Documents (rate per kg) SenderPays</th>
-            </tr>
-			<tr align="center">
-                <th>Country</th><th>21-30kg</th><th>31-50kg</th>
-				<th>51-100kg</th><th>101-300kg</th><th>300kg+</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>BE Zone</td>
-                <td>50</td><td>51</td><td>52</td>
-				<td>53</td><td>54</td>
-            </tr>
-			<tr style="border-left-style:none; border-right-style:none; border-bottom-style:none;"><td colspan="6"></td></tr>
-          </tbody>
-</table>
-
-   --%><br />
+<br />
   <div style="text-align: center">
   <input type="button" value="Close" class="cls-button" onclick="window.close();"/>
    </div>

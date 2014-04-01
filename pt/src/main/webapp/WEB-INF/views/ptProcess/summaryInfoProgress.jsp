@@ -30,96 +30,95 @@
 </style>
 <body>
 <form action="#">
-	<div style="padding:5px;">
+<div style="padding:5px;">
   <h4 class="title">New PT-Summary Info</h4>
-  <input type="hidden" value="${business.customerId}" name="business.customerId">
-    <input type="hidden" id="hiddenID" value="${business.id}" name="business.id">
-    <input type="hidden" value="${business.zoneType}" name="business.zoneType">
-  <table class="modify">
+  <table class="table_A">
+  <tr>
+  <td width="20%" align="left"><b>PT Approval Ref NO. &nbsp; :</b></td>
+  <td align="left">${business.applicationReference}</td>
+  </tr>
+  <tr></tr>
+  <tr> <td colspan="2"><b>Customer & Shipping Profile</b></td></tr>
+  </table>
+  <table class="tab">
     <tr>
-      <th>Application Date:</th>
-      <td><fmt:formatDate value="${business.applicationDate}" pattern="yyyy-MM-dd" /></td>
-      <th>Depot:</th>
-      <td>${business.depotCode}</td>
-    </tr>
-    <tr>
-      <th>A new PT Customer?</th>
-      <td>${business.isNewCus}</td>
-      <th>Territory:</th>
-      <td>${business.territory}</td>
-    </tr>
-    <tr>
-	  <th>PT Application Reference #: </th>
-      <td>${business.applicationReference}</td>
-      <th>Account #:</th>
+      <td>Customer Name :</td>
+      <td width="40%">${customer.cusName}</td>
+	  <td width="20%">Account # :</td>
       <td>${customer.account}</td>
     </tr>
     <tr>
-      <th>Customer Name</th>
-      <td>${customer.cusName}</td>
-      <th>Channel:</th>
-      <td>${customer.channel}</td>
+      <td>Origin Depot :</td>
+      <td>SHA	</td>
+      <td>Average Weight per Consignment :</td>
+      <td></td>
     </tr>
     <tr>
-      <th>Industry</th>
-      <td colspan="3">${customer.industry}</td>
-        
-    </tr>
-    <tr>
-      <th>Current Service Provider</th>
-      <td colspan="3">${customer.serviceProvider}</td>
-    </tr>
-   
-  </table>
-  <table class="modify">
-    <tr>
-      <th width="45%">Is the customer on fuel surcharge exemption or deduction now?</th>
-      <td>${customer.isFuleDeduction }</td>
-      <th width="20%">the Current fuel surcharge</th>
-      <td>${customer.fuelSurcharge }</td>
-    </tr>
-    <tr>
-      <th width="45%">Are you requesting for fuel surcharge exemption or deduction now?</th>
-      <td>${customer.isReq}</td>
-      <th width="20%">the fuel surcharge requested</th>
-      <td>${customer.reqFuelSurcharge}</td>
-    </tr>
-    </tr>
-    
-  </table>
-  <table class="modify">
-    <tr>
-      <th>Term of Payment:</th>
-      <td colspan="3">${customer.payment}</td>
-    </tr>
-    <tr>
-      <th>Is customer a mainly document sender?</th>
-      <td>${business.isDocumentSender}</td>
-      <th width="15%">Cons/Stop</th>
-      <td>${business.consStop}</td>
-    </tr>
-     <tr>
-      <th width="30%">Prdouct Description(eg:digital cameral)</th>
-      <td colspan="3">${business.description}</td>
-      
-    </tr>
-     <tr>
-      <th width="20%">Reason for the PT:</th>
-      <td colspan="3">${business.reson}</td>
+	  <td width="20%">Projected Monthly Revenue in CNY: </td>
+      <td colspan="3">220</td>
     </tr>
   </table>
+  <b>Loading Details</b>
+  <table>
+    <tr>
+      <td  width="20%">Division :</td>
+      <td  width="40%">G</td>
+      <td  width="20%">RateCategory :</td>
+      <td>07PTO</td>
+    </tr>
+    <tr>
+      <td>Approval Date :</td>
+      <td>30-Oct-08</td>
+      <td>Effective Date :</td>
+      <td>${business.effectiveDate}</td>
+    </tr>
+    <tr>
+      <td>End Date :</td>
+      <td>Open</td>
+      <td>Review Date :</td>
+      <td>Open</td>
+    </tr>
+    <tr>
+      <td>Product :</td>
+      <td>15D/12D/10D/09D</td>
+      <td>Terms of Payment :</td>
+      <td>${customer.payment}</td>
+    </tr>
+	<tr>
+      <td>Option :</td>
+      <td>No discount for potions!</td>
+      <td>Currency :</td>
+      <td>CNY</td>
+    </tr>
+    <tr>
+      <td>Zoning :</td>
+      <td>Set Default</td>
+      <td>Fuel Surchange :</td>
+      <td>FSI according to public fuel surchange</td>
+    </tr>
+    </table>
   </div>
  <br />
  <div style="padding:5px;">
-  <c:if test="${flag=='Both'}">
-	<table class="tabTitlesContainer">
-		<tr id="tabTitles">
-			<td class="tabTitleSelected" onclick="tabPageControl(0)" style="cursor:pointer">Sender Pay</td>
-			<td class="tabTitleUnSelected" onclick="tabPageControl(1)" style="cursor:pointer">Recieve Pay</td>
-		</tr>
-	</table>
+ <c:if test="${flag=='Both'}">
+	<div style="padding:0;" id="tabsI">
+	  <ul>
+	    <li><a href="#" onclick="tabPageControl(0)" title="Sender Pay" id="sp" class="activeBack"><span id="sps" class="activeSpan">Sender Pay</span></a></li>
+	    <li><a href="#" onclick="tabPageControl(1)" title="Recieve Pay" id="rp"><span id="rps">Recieve Pay</span></a></li>
+	  </ul>
+	</div>
 </c:if>
+</div>
+<div style="padding:5px;" id="tabPagesContainer">
 <div class="tabPageSelected" id="sedDIV">
+	<div style="padding:0;" id="tabsI">
+	  <ul id="nav">
+	    <li><a href="#" onclick="tabControl(0)" title="Discount Profile"  id="a0" class="activeBack"><span id="s0" class="activeSpan">Discount Profile</span></a></li>
+	    <li><a href="#" onclick="tabControl(1)" title="Heavy Weight Rate" id="a1"><span id="s1">Heavy Weight Rate</span></a></li>
+	    <li><a href="#" onclick="tabControl(2)" title="Consignment Profile" id="a2"><span id="s2">Consignment Profile</span></a></li>
+	  </ul>
+	</div>
+<div class="tabPageSelected" id="disDIV">
  <table>
  <tr>
  <td style="background-color:#F5C07B">Summary </td><td style="background-color:#EFEFEF">Rev(CNY)</td><td>${zoneSummary.revM}/M</td>
@@ -127,9 +126,7 @@
   <td style="background-color:#EFEFEF">Kilo(kg) </td><td>${zoneSummary.kiloM}/M</td><td>${zoneSummary.kiloY}/Y</td>
  </tr>
  </table>
- <br />
-<div style="padding:0 5px 5px 5px;">
-<div class="clearboth"> </div>
+<br/>
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
@@ -203,12 +200,20 @@
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
-                <th colspan="15" style="text-align:left;">Discounts Requested</th>
+                <th colspan="25" style="text-align:left;">Discounts Profile-15D/12D/10D/09D</th>
             </tr>
             <tr>
-                <th>PRODUCT</th>
-                <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>${zoneGroup.zone}</th>
+                <th rowspan="2">Weightband</th>
+                <th rowspan="2">Inc</th>
+                <th rowspan="2">Add On</th>
+               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+						<th colspan="2">${zoneGroup.zone}</th>
+				</c:forEach>
+            </tr>
+            <tr>
+               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+						<th>Base</th>
+						<th>Int</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -216,25 +221,45 @@
             <c:forEach items="${documentList}" var="weightBand">
 				<tr>
 					<td>${weightBand.name}</td>
-					<%--<td>${weightBand.chargeableWeight}</td>
-					--%><c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<td>${discountMap[key]}</td>
+					<td>${weightBand.addOnWeightInt}kg</td>
+					<c:if test="${weightBand.type=='base'}">
+						<td align="center">N</td>
+					</c:if>
+					<c:if test="${weightBand.type=='add'}">
+						<td align="center">Y</td>
+					</c:if>
+					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+					    <c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
+						<c:if test="${weightBand.type=='base'}">
+							<td>${discountMap[key]}%</td>
+						</c:if>
+						<c:if test="${weightBand.type=='add'}">
+							<td></td>
+						</c:if>
+						<td>${discountMap[key]}%</td>	
 				   </c:forEach>
 			   </tr>
 			</c:forEach>
-        </tbody>
-    </table>
-	<br />
+          </tbody>
+</table>
+<br />
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
-                <th colspan="15" style="text-align:left;">Discounts Profile-15N/12N/10N/09N</th>
+                <th colspan="25" style="text-align:left;">Discounts Profile-15N/12N/10N/09N</th>
             </tr>
             <tr>
-                <th>Weightband</th>
-                 <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>${zoneGroup.zone}</th>
+                <th rowspan="2">Weightband</th>
+                <th rowspan="2">Inc</th>
+                <th rowspan="2">Add On</th>
+               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+						<th colspan="2">${zoneGroup.zone}</th>
+				</c:forEach>
+            </tr>
+            <tr>
+               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+						<th>Base</th>
+						<th>Int</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -242,42 +267,76 @@
             <c:forEach items="${ndocumentList}" var="weightBand">
 				<tr>
 					<td>${weightBand.name}</td>
+					<td>${weightBand.addOnWeightInt}kg</td>
+					<c:if test="${weightBand.type=='base'}">
+						<td align="center">N</td>
+					</c:if>
+					<c:if test="${weightBand.type=='add'}">
+						<td align="center">Y</td>
+					</c:if>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<td>${discountMap[key]}</td>
+					    <c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
+						<c:if test="${weightBand.type=='base'}">
+							<td>${discountMap[key]}%</td>
+						</c:if>
+						<c:if test="${weightBand.type=='add'}">
+							<td></td>
+						</c:if>
+						<td>${discountMap[key]}%</td>	
 				   </c:forEach>
 			   </tr>
-			  </c:forEach>
+			</c:forEach>
           </tbody>
 </table>
-<br />
+<br>
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
-                <th colspan="15" style="text-align:left;">Discounts Profile-48N</th>
+                <th colspan="25" style="text-align:left;">Discounts Profile-48N</th>
             </tr>
             <tr>
-                <th>Weightband</th>
-                <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>${zoneGroup.zone}</th>
+                <th rowspan="2">Weightband</th>
+                <th rowspan="2">Inc</th>
+                <th rowspan="2">Add On</th>
+               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+						<th colspan="2">${zoneGroup.zone}</th>
+				</c:forEach>
+            </tr>
+            <tr>
+               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+						<th>Base</th>
+						<th>Int</th>
 				</c:forEach>
             </tr>
         </thead>
         <tbody>
-            <c:forEach items="${eonomyList}" var="weightBand">
+           <c:forEach items="${economyList}" var="weightBand">
 				<tr>
 					<td>${weightBand.name}</td>
-					<%--<td>${weightBand.chargeableWeight}</td>
-					--%><c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<td>${discountMap[key]}</td>
+					<td>${weightBand.addOnWeightInt}kg</td>
+					<c:if test="${weightBand.type=='base'}">
+						<td align="center">N</td>
+					</c:if>
+					<c:if test="${weightBand.type=='add'}">
+						<td align="center">Y</td>
+					</c:if>
+					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+					    <c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
+						<c:if test="${weightBand.type=='base'}">
+							<td>${discountMap[key]}%</td>
+						</c:if>
+						<c:if test="${weightBand.type=='add'}">
+							<td></td>
+						</c:if>
+						<td>${discountMap[key]}%</td>	
 				   </c:forEach>
 			   </tr>
-			  </c:forEach>
-          </tbody>
-</table>
-<br />
-<br />
+			</c:forEach>
+        </tbody>
+    </table>
+</br>
+</div>
+<div class="tabPageUnSelected" id="conDIV">
 <table class="table_B" width="100%">
         <thead>
 						<tr align="center">
@@ -327,7 +386,6 @@
 			  </c:forEach>
           </tbody>
 </table>
-<br>
 <table class="table_B" width="100%">
         <thead>
 						<tr align="center">
@@ -352,7 +410,9 @@
 			  </c:forEach>
           </tbody>
 </table>
-<br/>
+</br>
+</div>
+<div class="tabPageUnSelected" id="hwDIV">
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
@@ -380,8 +440,6 @@
 			   </tr>
 			</c:forEach>
         </tbody>
-</table>
-<table class="table_B" width="100%">
         <thead>
 			<tr align="center">
                 <th colspan="14" style="text-align:left;">New PT-HW rate Profile-48N(RMB per kilo)</th>
@@ -410,6 +468,14 @@
 </div>
 </div>
 <div class="tabPageUnSelected" id="recDIV">
+	<div style="padding:0;" id="tabsI">
+	  <ul>
+	    <li><a href="#" onclick="tabControlRec(0)" title="Discount Profile" id="aa0"><span id="ss0">Discount Profile</span></a></li>
+	    <li><a href="#" onclick="tabControlRec(1)" title="Heavy Weight Rate" id="aa1"><span id="ss1">Heavy Weight Rate</span></a></li>
+	    <li><a href="#" onclick="tabControlRec(2)" title="Consignment Profile" id="aa2"><span id="ss2">Consignment Profile</span></a></li>
+	  </ul>
+	</div>
+<div class="tabPageSelected" id="disDIVrec">
  <table>
  <tr>
  <td style="background-color:#F5C07B">Summary </td><td style="background-color:#EFEFEF">Rev(CNY)</td><td>${recZoneSummary.revM}/M</td>
@@ -417,9 +483,7 @@
   <td style="background-color:#EFEFEF">Kilo(kg) </td><td>${recZoneSummary.kiloM}/M</td><td>${recZoneSummary.kiloY}/Y</td>
  </tr>
  </table>
- <br />
-<div style="padding:0 5px 5px 5px;">
-<div class="clearboth"> </div>
+<br/>
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
@@ -489,16 +553,23 @@
 		 </c:forEach>
           </tbody>
 </table>
-<br>
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
-                <th colspan="15" style="text-align:left;">Discounts Requested</th>
+                <th colspan="25" style="text-align:left;">Discounts Profile-15D/12D/10D/09D</th>
             </tr>
             <tr>
-                <th>PRODUCT</th>
-                <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>${zoneGroup.zone}</th>
+                <th rowspan="2">Weightband</th>
+                <th rowspan="2">Inc</th>
+                <th rowspan="2">Add On</th>
+               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+						<th colspan="2">${zoneGroup.zone}</th>
+				</c:forEach>
+            </tr>
+            <tr>
+               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+						<th>Base</th>
+						<th>Int</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -506,24 +577,45 @@
             <c:forEach items="${documentList}" var="weightBand">
 				<tr>
 					<td>${weightBand.name}</td>
+					<td>${weightBand.addOnWeightInt}kg</td>
+					<c:if test="${weightBand.type=='base'}">
+						<td align="center">N</td>
+					</c:if>
+					<c:if test="${weightBand.type=='add'}">
+						<td align="center">Y</td>
+					</c:if>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<td>${recDiscountMap[key]}</td>
+					    <c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
+						<c:if test="${weightBand.type=='base'}">
+							<td>${recDiscountMap[key]}%</td>
+						</c:if>
+						<c:if test="${weightBand.type=='add'}">
+							<td></td>
+						</c:if>
+						<td>${recDiscountMap[key]}%</td>	
 				   </c:forEach>
 			   </tr>
 			</c:forEach>
-        </tbody>
-    </table>
-	<br />
+          </tbody>
+</table>
+<br />
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
-                <th colspan="15" style="text-align:left;">Discounts Profile-15N/12N/10N/09N</th>
+                <th colspan="25" style="text-align:left;">Discounts Profile-15N/12N/10N/09N</th>
             </tr>
             <tr>
-                <th>Weightband</th>
-                 <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>${zoneGroup.zone}</th>
+                <th rowspan="2">Weightband</th>
+                <th rowspan="2">Inc</th>
+                <th rowspan="2">Add On</th>
+               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+						<th colspan="2">${zoneGroup.zone}</th>
+				</c:forEach>
+            </tr>
+            <tr>
+               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+						<th>Base</th>
+						<th>Int</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -531,41 +623,76 @@
             <c:forEach items="${ndocumentList}" var="weightBand">
 				<tr>
 					<td>${weightBand.name}</td>
+					<td>${weightBand.addOnWeightInt}kg</td>
+					<c:if test="${weightBand.type=='base'}">
+						<td align="center">N</td>
+					</c:if>
+					<c:if test="${weightBand.type=='add'}">
+						<td align="center">Y</td>
+					</c:if>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<td>${recDiscountMap[key]}</td>
+					    <c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
+						<c:if test="${weightBand.type=='base'}">
+							<td>${recDiscountMap[key]}%</td>
+						</c:if>
+						<c:if test="${weightBand.type=='add'}">
+							<td></td>
+						</c:if>
+						<td>${recDiscountMap[key]}%</td>	
 				   </c:forEach>
 			   </tr>
-			  </c:forEach>
+			</c:forEach>
           </tbody>
 </table>
-<br />
+<br/>
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
-                <th colspan="15" style="text-align:left;">Discounts Profile-48N</th>
+                <th colspan="25" style="text-align:left;">Discounts Profile-48N</th>
             </tr>
             <tr>
-                <th>Weightband</th>
-                <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>${zoneGroup.zone}</th>
+                <th rowspan="2">Weightband</th>
+                <th rowspan="2">Inc</th>
+                <th rowspan="2">Add On</th>
+               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+						<th colspan="2">${zoneGroup.zone}</th>
+				</c:forEach>
+            </tr>
+            <tr>
+               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+						<th>Base</th>
+						<th>Int</th>
 				</c:forEach>
             </tr>
         </thead>
         <tbody>
-            <c:forEach items="${eonomyList}" var="weightBand">
+           <c:forEach items="${economyList}" var="weightBand">
 				<tr>
 					<td>${weightBand.name}</td>
+					<td>${weightBand.addOnWeightInt}kg</td>
+					<c:if test="${weightBand.type=='base'}">
+						<td align="center">N</td>
+					</c:if>
+					<c:if test="${weightBand.type=='add'}">
+						<td align="center">Y</td>
+					</c:if>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<td>${recDiscountMap[key]}</td>
+					    <c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
+						<c:if test="${weightBand.type=='base'}">
+							<td>${recDiscountMap[key]}%</td>
+						</c:if>
+						<c:if test="${weightBand.type=='add'}">
+							<td></td>
+						</c:if>
+						<td>${recDiscountMap[key]}%</td>	
 				   </c:forEach>
 			   </tr>
-			  </c:forEach>
-          </tbody>
-</table>
+			</c:forEach>
+        </tbody>
+    </table>
 <br />
-<br />
+</div>
+<div class="tabPageSelected" id="conDIVrec">
 <table class="table_B" width="100%">
         <thead>
 						<tr align="center">
@@ -584,7 +711,7 @@
 					<td>${weightBand.name}</td>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<td><${recConsignmentMap[key]}</td>
+						<td>${recConsignmentMap[key]}</td>
 				   </c:forEach>
 			   </tr>
 			</c:forEach>
@@ -609,7 +736,7 @@
 					<td>${weightBand.name}</td>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<td><${recConsignmentMap[key]}</td>
+						<td>${recConsignmentMap[key]}</td>
 				   </c:forEach>
 			   </tr>
 			  </c:forEach>
@@ -634,13 +761,15 @@
 					<td>${weightBand.name}</td>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<td><${recConsignmentMap[key]}</td>
+						<td>${recConsignmentMap[key]}</td>
 				   </c:forEach>
 			   </tr>
 			  </c:forEach>
           </tbody>
 </table>
-<br/>
+</br>
+</div>
+<div class="tabPageSelected" id="hwDIVrec">
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
@@ -668,8 +797,6 @@
 			   </tr>
 			</c:forEach>
         </tbody>
-</table>
-<table class="table_B" width="100%">
         <thead>
 			<tr align="center">
                 <th colspan="14" style="text-align:left;">New PT-HW rate Profile-48N(RMB per kilo)</th>
@@ -697,7 +824,9 @@
 </table>
 </div>
 </div>
-<br>
+</div>
+</div>
+<br/>
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
@@ -731,6 +860,7 @@
    	&nbsp;&nbsp;&nbsp;<input type="button" id="Reject" value="Reject" class="cls-button" />
    	 &nbsp;&nbsp;&nbsp;<input type="button" value="Return to PT List" class="cls-button" id="Return" onclick="javascript:history.go(-1);"/>
    </div>
+   <input type="hidden" id="hiddenID" value="${business.id}" name="business.id"/>
 </form>
 </div>
 <script type="text/javascript">
@@ -802,20 +932,99 @@
 	});
     
 	function tabPageControl(n) {
-		for ( var i = 0; i < tabTitles.cells.length; i++) {
-			tabTitles.cells[i].className = "tabTitleUnSelected";
-		}
-		tabTitles.cells[n].className = "tabTitleSelected";
 		if(n==1){
 			document.getElementById("recDIV").style.cssText = "display:block;";
 			document.getElementById("sedDIV").style.cssText = "display:none;";
+			document.getElementById("rp").style.cssText = "background-position:0% -42px;";
+			document.getElementById("rps").style.cssText = "background-position:100% -42px;";
+			document.getElementById("sp").style.cssText = "background-position:";
+			document.getElementById("sps").style.cssText = "background-position:";
+			for(var i=0;i<=2;i++){
+				if(i==0){
+					var links= "aa"+i;var sp= "ss"+i;
+					document.getElementById(links).style.cssText = "background-position:0% -42px;";
+					document.getElementById(sp).style.cssText = "background-position:100% -42px;";
+				}else{
+					var links= "aa"+i;var sp= "ss"+i;
+					document.getElementById(links).style.cssText = "background-position:";
+					document.getElementById(sp).style.cssText = "background-position:";
+				}
+			}
 		}else{
 			document.getElementById("sedDIV").style.cssText = "display:block;";
 			document.getElementById("recDIV").style.cssText = "display:none;";
+			document.getElementById("rp").style.cssText = "background-position:";
+			document.getElementById("rps").style.cssText = "background-position:";
+			document.getElementById("sp").style.cssText = "background-position:0% -42px;";
+			document.getElementById("sps").style.cssText = "background-position:100% -42px;";
+			for(var i=0;i<=2;i++){
+				if(i==0){
+					var links= "a"+i;var sp= "s"+i;
+					document.getElementById(links).style.cssText = "background-position:0% -42px;";
+					document.getElementById(sp).style.cssText = "background-position:100% -42px;";
+				}else{
+					var links= "a"+i;var sp= "s"+i;
+					document.getElementById(links).style.cssText = "background-position:";
+					document.getElementById(sp).style.cssText = "background-position:";
+				}
+			}
 		}
 		
 	}
-	
+	function tabControl(n) {
+		for(var i=0;i<=2;i++){
+			if(i==n){
+				var links= "a"+i;var sp= "s"+i;
+				document.getElementById(links).style.cssText = "background-position:0% -42px;";
+				document.getElementById(sp).style.cssText = "background-position:100% -42px;";
+			}else{
+				var links= "a"+i;var sp= "s"+i;
+				document.getElementById(links).style.cssText = "background-position:";
+				document.getElementById(sp).style.cssText = "background-position:";
+			}
+		}
+		if(n==1){
+			document.getElementById("hwDIV").style.cssText = "display:block;";
+			document.getElementById("disDIV").style.cssText = "display:none;";
+			document.getElementById("conDIV").style.cssText = "display:none;";
+			
+		}else if(n==2){
+			document.getElementById("conDIV").style.cssText = "display:block;";
+			document.getElementById("hwDIV").style.cssText = "display:none;";
+			document.getElementById("disDIV").style.cssText = "display:none;";
+		}else{
+			document.getElementById("disDIV").style.cssText = "display:block;";
+			document.getElementById("hwDIV").style.cssText = "display:none;";
+			document.getElementById("conDIV").style.cssText = "display:none;";
+		}
+	}
+
+	function tabControlRec(n) {
+		for(var i=0;i<=2;i++){
+			if(i==n){
+				var links= "aa"+i;var sp= "ss"+i;
+				document.getElementById(links).style.cssText = "background-position:0% -42px;";
+				document.getElementById(sp).style.cssText = "background-position:100% -42px;";
+			}else{
+				var links= "aa"+i;var sp= "ss"+i;
+				document.getElementById(links).style.cssText = "background-position:";
+				document.getElementById(sp).style.cssText = "background-position:";
+			}
+		}
+		if(n==1){
+			document.getElementById("hwDIVrec").style.cssText = "display:block;";
+			document.getElementById("disDIVrec").style.cssText = "display:none;";
+			document.getElementById("conDIVrec").style.cssText = "display:none;";
+		}else if(n==2){
+			document.getElementById("conDIVrec").style.cssText = "display:block;";
+			document.getElementById("hwDIVrec").style.cssText = "display:none;";
+			document.getElementById("disDIVrec").style.cssText = "display:none;";
+		}else{
+			document.getElementById("disDIVrec").style.cssText = "display:block;";
+			document.getElementById("hwDIVrec").style.cssText = "display:none;";
+			document.getElementById("conDIVrec").style.cssText = "display:none;";
+		}
+	}
 </script>
 </body>
 </html>

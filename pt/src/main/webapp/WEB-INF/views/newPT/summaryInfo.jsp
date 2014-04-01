@@ -44,7 +44,6 @@ response.setDateHeader("Expires", -10);
     <%--***************隐藏域********** --%>
   <table class="modify">
     <tr>
-    
       <th>Application Date:</th>
       <td><fmt:formatDate value="${business.applicationDate}" pattern="yyyy-MM-dd" /></td>
       <th>Depot:</th>
@@ -98,7 +97,9 @@ response.setDateHeader("Expires", -10);
   <table class="modify">
     <tr>
       <th>Term of Payment:</th>
-      <td colspan="3">${payment}</td>
+      <td colspan="3" style="background-color:yellow">
+      <span><B>${payment}</B></span>
+      </td>
     </tr>
     <tr>
       <th>Is customer a mainly document sender?</th>
@@ -353,9 +354,20 @@ response.setDateHeader("Expires", -10);
           </tbody>
 </table>
   <div style="text-align: center">
-  <input type="button" value="Previous" class="cls-button" id="Previous" /> 
-  	&nbsp;&nbsp;&nbsp;<input type="button" value="Close" class="cls-button" id="Close"/>
-   	&nbsp;&nbsp;&nbsp;<input type="button" value="Submit" class="cls-button" id="Submit"/>
+	  <input type="button" value="Previous" class="cls-button" id="Previous" /> 
+	  <c:if test="${isFollow=='NO'}">
+			<c:if test="${payment=='SenderPay'}">
+				&nbsp;&nbsp;&nbsp;<input type="button" value="Continue to RP" class="cls-button" id="toRP"/>
+		    </c:if>
+		    <c:if test="${payment=='ReceivePay'}">
+				&nbsp;&nbsp;&nbsp;<input type="button" value="Close" class="cls-button" id="Close"/>
+				&nbsp;&nbsp;&nbsp;<input type="button" value="Submit" class="cls-button" id="Submit"/>
+		    </c:if>
+	  </c:if>
+  	  <c:if test="${isFollow!='NO'}">
+		&nbsp;&nbsp;&nbsp;<input type="button" value="Close" class="cls-button" id="Close"/>
+		&nbsp;&nbsp;&nbsp;<input type="button" value="Submit" class="cls-button" id="Submit"/>
+	  </c:if>
    </div>
    <input type="hidden" id="isFollow" value="${isFollow}" name="isFollow">
    <input type="hidden" id="payment" value="${payment}" name="payment">
@@ -377,6 +389,11 @@ response.setDateHeader("Expires", -10);
 	});
 
 	$(function(){
+		$("#toRP").click(function(){
+           	$("#summaryInfo").attr('action',"${ctx}/ptCreate/summaryInfo");
+           	$("#summaryInfo").submit();
+		});
+		
 		 $("#Close").click(function(){
 			 if($('#isFollow').val()=='NO'&&$('#payment').val()=='<%=PTPARAMETERS.PAYMENT[0]%>'){
               	$("#summaryInfo").attr('action',"${ctx}/ptCreate/summaryInfo");
@@ -396,7 +413,6 @@ response.setDateHeader("Expires", -10);
   	                }
   	            });
               }
-	            
 		});
 		 
 		 $("#Submit").click(function(){

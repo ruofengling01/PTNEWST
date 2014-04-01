@@ -1467,17 +1467,14 @@ public class PTCreateController {
 		
 		//Long businessId = business.getId();
 		for (Discount discount :discountList) {
-			discountMap.put(discount.getWeightBandId()+"_"+discount.getZoneGroupId(), discount.getDiscount());
+			discountMap.put(discount.getWeightBandId()+"_"+discount.getZoneGroupId(), 100-discount.getDiscount());
 		}
 		for (Tariff tariff :tariffList) {
 			tariffMap.put(tariff.getTariffGroupId()+"_"+tariff.getZoneGroupId(), tariff.getTariff()/100);
 		}
-		
-		
 		for (WeightBand weightBand :documentList) {
 			documentTGList = tariffGroupService.getAllTariffGroup(weightBand.getProductId(), payment);
 		}
-		
 		for (ZoneGroup zoneGroup :zoneGroupList) {
 			for(TariffGroup tfg : documentTGList){
 				Rate rate =  new Rate();
@@ -1512,7 +1509,7 @@ public class PTCreateController {
 					Long zoneGroupId = zoneGroup.getId();
 					rate.setBusinessId(businessId);
 					//rate = discount * tariff
-				/*	Double chargeWeightBand = weightBand.getChargeableWeight();//
+					/*	Double chargeWeightBand = weightBand.getChargeableWeight();//
 					TariffGroup tariffGroup  = new TariffGroup();
 					//根据weightband 以及chargeweightband的值，假如<=20 则根据 weight，weightBandId，type 三个确定一个对象
 					if(chargeWeightBand <= 20){

@@ -23,6 +23,7 @@
 		      <td><input type="text" name="account" value="${model.account}"></td>
 		      <td>Depot:</td>
 		      <td><select name="depot" value="${model.depot}">
+		      <option value="">请选择</option> 
 		      <c:forEach items="${depotList}" var="depots">
 		      	<option value="${depots}" <c:if test="${depots==model.depot}">selected</c:if>>${depots}</option> 
 		      </c:forEach>

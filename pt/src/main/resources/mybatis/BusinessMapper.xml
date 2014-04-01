@@ -25,7 +25,8 @@
 				and state =#{state}
 		</if>
 		<if test="depot != null and depot != '' ">
-				and depotcode =#{depot}
+				and depotcode = #{depot}
+				
 		</if>
 		<if test="revMonStart != null and revMonStart != '' ">
 				and nvl(b.TOTALREV_R,0)+nvl(b.TOTALREV_S,0)+nvl(b.TOTALREV,0) &gt;= #{revMonStart}

@@ -376,6 +376,8 @@ public class PTApproveController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		DecimalFormat df = new DecimalFormat("0.##");
 		try {
+//			String[] groupBy = businessVO.getMultichoised().split(",");
+			
 			String[] groupBy = {"","Product", "PT Zone", "WeightBand","Country"};
 			for (String str : groupBy) {
 				if(!str.equals("")){
@@ -385,7 +387,6 @@ public class PTApproveController {
 			Business business = businessService.getBusiness(Long.parseLong(businessVO.getId()));
 			Customer cus = customerService.getCustomer(business.getCustomerId());
 			flag = cus.getPayment();
-			
 			List<String> r;
 			if(cus.getPayment().equals(PTPARAMETERS.PAYMENT[2])&&business.getIsFollow().equals("NO")){//如果选择的是both 并且 isfollow为no  此时需要展示两个tab页
 				sendReviewList = revService.getGroupBy(Long.parseLong(businessVO.getId()), groupBy, PTPARAMETERS.PAYMENT[0]);
@@ -427,6 +428,9 @@ public class PTApproveController {
 				map.put("chargeableweight", view.getChargeableWeight());
 				map.put("countryCode", view.getCountryCode());
 				String itemsNum = accountService.getItemNum(map);
+				/*if(view.getChargeableWeight().equals("25")&&view.getCountryCode().equals("AF")){
+					System.out.println("   333333333  ");
+				}*/
 				if(Double.parseDouble(view.getChargeableWeight())<20)  itemsNum="1";
 				if(view.getCons()/20-business.getConsStop()>0){
 					//计算 DM  FM
@@ -436,6 +440,9 @@ public class PTApproveController {
 					//计算 DM  FM
 					r = cc.getTotalCosts(cus.getAccount(), sdf.format(business.getApplicationDate()), payMent, "CN", business.getDepotCode(), view.getCountryCode(), 
 							view.getDepotCode(), view.getPRODUCTNAME(), view.getChargeableWeight(), itemsNum,view.getCons()/20+"", Double.parseDouble(view.getChargeableWeight())>=20?"H":"L", "0OKM,[uytgh98}TR54", cus.getChannel());
+//					String str = "cc.getTotalCosts("+cus.getAccount()+","+sdf.format(business.getApplicationDate())+","+payMent+",CN,"+business.getDepotCode()+","+ view.getCountryCode()+","+ view.getDepotCode()+","+  view.getPRODUCTNAME()+","
+//							+  view.getChargeableWeight()+","+ itemsNum+","+view.getCons()+"H,0OKM,[uytgh98}TR54,"+ cus.getChannel()+")";
+//					System.out.println(str);
 				}
 				// 取绝对值
 				view.setDm((view.getRev()-Double.parseDouble(r.get(1))*view.getCons())/view.getRev());//r.get(0)
@@ -1512,8 +1519,9 @@ public class PTApproveController {
 		        	cellMap.put(showSize+5, sendlist.get(i-1).getRpc()+"");cellMap.put(showSize+6, sendlist.get(i-1).getRpk()+"");
 		        	cellMap.put(showSize+7, sendlist.get(i-1).getWpc()+"");cellMap.put(showSize+9, df.format(sendlist.get(i-1).getRev()-sendlist.get(i-1).getDm()));
 		        	cellMap.put(showSize+10, sendlist.get(i-1).getFm()+"");cellMap.put(showSize+11, sendlist.get(i-1).getDm()+"");
-		        	hwRateList = hwRateService.getAllHWRateByBusId(business.getId(),payMent);
-		        	if(Double.parseDouble(sendlist.get(i-1).getWEIGHTNAME().split("-")[0])-20>0){
+		        	hwRateList = hwRateService.getAllHWRateByBusId(business.getId(),PTPARAMETERS.PAYMENT[0]);
+		        	
+		        	if(Double.parseDouble(sendlist.get(i-1).getChargeableWeight())-20>0){
 		        		cellMap.put(showSize+12, "no");
 		        		for (HWRate hwRate:hwRateList) {//2 15N  3 48N
 			    			if(hwRate.getProductId().toString().equals("2")&&sendlist.get(i-1).getPRODUCTNAME().equals("15N")){
@@ -1555,8 +1563,17 @@ public class PTApproveController {
 		        	cellMap.put(showSize+5, recievelist.get(i-1).getRpc()+"");cellMap.put(showSize+6, recievelist.get(i-1).getRpk()+"");
 		        	cellMap.put(showSize+7, recievelist.get(i-1).getWpc()+"");cellMap.put(showSize+9, df.format(recievelist.get(i-1).getDm()/recievelist.get(i-1).getRev()));
 		        	cellMap.put(showSize+10, recievelist.get(i-1).getFm()+"");cellMap.put(showSize+11, recievelist.get(i-1).getDm()+"");
-		        	if(Double.parseDouble(recievelist.get(i-1).getWEIGHTNAME().split("-")[0])-20>0){
-		        		cellMap.put(showSize+12, "yes");
+		        	hwRateList = hwRateService.getAllHWRateByBusId(business.getId(),PTPARAMETERS.PAYMENT[1]);
+		        	if(Double.parseDouble(recievelist.get(i-1).getChargeableWeight())-20>0){
+		        		cellMap.put(showSize+12, "no");
+		        		for (HWRate hwRate:hwRateList) {//2 15N  3 48N
+			    			if(hwRate.getProductId().toString().equals("2")&&sendlist.get(i-1).getPRODUCTNAME().equals("15N")){
+			    					cellMap.put(showSize+12, "yes");break;
+			    			}
+			    			if(hwRate.getProductId().toString().equals("3")&&sendlist.get(i-1).getPRODUCTNAME().equals("48N")){
+		    					cellMap.put(showSize+12, "yes");break;
+			    			}
+			    		}
 		        	}else{
 		        		cellMap.put(showSize+12, "no");
 		        	}
@@ -1592,6 +1609,7 @@ public class PTApproveController {
 		        	HSSFRow rowdata = sheet.createRow((short) i);
 		        	HashMap<Integer, String> cellMap = new HashMap<Integer, String>();
 		        	cellMap.put(0, payMent);
+		        	RevVO revVO = sendlist.get(i-1);
 		        	for(int k=0;k<showSize;k++){
 		        		String str = showList.get(k);
 		        		if(str.equals("Country")){
@@ -1604,14 +1622,25 @@ public class PTApproveController {
 		        			cellMap.put(k+1, sendlist.get(i-1).getWEIGHTNAME()+"");
 		        		}
 		        	}
-		        	cellMap.put(showSize+1, sendlist.get(i-1).getDepotCode());
-		        	cellMap.put(showSize+2, sendlist.get(i-1).getRev()+"");cellMap.put(showSize+8, df.format(sendlist.get(i-1).getFm()/sendlist.get(i-1).getRev()));
-		        	cellMap.put(showSize+3, sendlist.get(i-1).getCons()+"");cellMap.put(showSize+4, sendlist.get(i-1).getKilo()+"");
-		        	cellMap.put(showSize+5, sendlist.get(i-1).getRpc()+"");cellMap.put(showSize+6, sendlist.get(i-1).getRpk()+"");
-		        	cellMap.put(showSize+7, sendlist.get(i-1).getWpc()+"");cellMap.put(showSize+9, df.format(sendlist.get(i-1).getDm()/sendlist.get(i-1).getRev()));
-		        	cellMap.put(showSize+10, sendlist.get(i-1).getFm()+"");cellMap.put(showSize+11, sendlist.get(i-1).getDm()+"");
-		        	if(Double.parseDouble(sendlist.get(i-1).getWEIGHTNAME().split("-")[0])-20>0){
-		        		cellMap.put(showSize+12, "yes");
+		        	cellMap.put(showSize+1, revVO.getDepotCode());
+		        	cellMap.put(showSize+2, revVO.getRev()+"");cellMap.put(showSize+8, df.format(revVO.getFm()/revVO.getRev()));
+		        	cellMap.put(showSize+3, revVO.getCons()+"");cellMap.put(showSize+4, revVO.getKilo()+"");
+		        	cellMap.put(showSize+5, revVO.getRpc()+"");cellMap.put(showSize+6, revVO.getRpk()+"");
+		        	cellMap.put(showSize+7, revVO.getWpc()+"");cellMap.put(showSize+9, df.format(revVO.getDm()/revVO.getRev()));
+		        	cellMap.put(showSize+10, revVO.getFm()+"");cellMap.put(showSize+11, revVO.getDm()+"");
+		        	hwRateList = hwRateService.getAllHWRateByBusId(business.getId(),payMent);
+		        	if(Double.parseDouble(revVO.getChargeableWeight())-20>0){
+		        		cellMap.put(showSize+12, "no");
+		        		for (HWRate hwRate:hwRateList) {//2 15N  3 48N
+			    			if(hwRate.getProductId().toString().equals("2")&&revVO.getPRODUCTNAME().equals("15N")
+			    					&&hwRate.getCountryId().equals(revVO.getCountryId())){
+			    					cellMap.put(showSize+12, "yes");break;
+			    			}
+			    			if(hwRate.getProductId().toString().equals("3")&&revVO.getPRODUCTNAME().equals("48N")
+			    					&&hwRate.getCountryId().equals(revVO.getCountryId())){
+		    					cellMap.put(showSize+12, "yes");break;
+			    			}
+			    		}
 		        	}else{
 		        		cellMap.put(showSize+12, "no");
 		        	}
@@ -1817,7 +1846,7 @@ public class PTApproveController {
 			response.setContentType("application/vnd.ms-excel;charset=utf-8");
 			// 表示以附件的形式把文件发送到客户端
 			response.setHeader("Content-Disposition", "attachment;filename="
-						+ new String(((new Date().getTime())+".xls").getBytes(), "ISO8859-1"));
+						+ new String(((business.getApplicationReference())+".xls").getBytes(), "ISO8859-1"));
 			// 通过response的输出流把工作薄的流发送浏览器形成文件
 			OutputStream os = response.getOutputStream();
 			workbook.write(os);

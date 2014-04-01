@@ -27,7 +27,7 @@ $(document).ready(function(){
 
 });
 </script>
-<form action="${ctx}/ptQuery/queryPT" method="post" id="ptQueryForm">
+<form action="${ctx}/ptQuery/queryPT" method="post" id="ptQueryForm" target="_self">
 
 <div>
 <div style="padding:0 5px 5px 5px;">
@@ -51,15 +51,13 @@ $(document).ready(function(){
         <tbody>
              <c:forEach items="${businessList}" var="business">
 				<tr>
-					<td>
-						<a id="showDetail" href="#" onclick="showDetail('${business.id}')">${business.applicationReference}</a>
-					</td>
+					<td>${business.applicationReference}</td>
 					<td><fmt:formatDate  value="${business.applicationDate}" pattern="yyyy-MM-dd"></fmt:formatDate ></td>
 					<td>${business.account}</td>
 					<td>${business.cusName}</td>
 					<td>${business.depotCode}</td>
 					<td>${business.channel}</td>
-					<td>SP</td>
+					<td>${business.consStop}</td>
 					<td>${business.description}</td>
 					<td>${business.state}</td>
 	                <td><a id="appeal" href="#" onclick="copy('${business.id}')">copy</a></td>
@@ -79,11 +77,6 @@ $(document).ready(function(){
        
     });
 
-	function showDetail(val){
-		document.forms[0].action="${ctx}/ptQuery/tariffPT?id="+val;
-		document.forms[0].submit();
-	}
-     
     function copy(val){
     	 $.ajax({
              type:"POST",
@@ -98,8 +91,6 @@ $(document).ready(function(){
                  alert("error："+e);
              }
          });
-		//document.forms[0].action=;
-		//document.forms[0].submit();
 	}
 </script>
 </body>
