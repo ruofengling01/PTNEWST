@@ -8,7 +8,7 @@ public class WeightBand extends IdEntity {
 	private Double chargeableWeight;
 	private Double begin;
 	private Double end;
-	private Integer addOnWeightInt;
+	private Double addOnWeightInt;
 	private String  type;
 	private String isHighWeight;
 	private Long weightbandGroupId;
@@ -61,11 +61,11 @@ public class WeightBand extends IdEntity {
 		this.end = end;
 	}
 
-	public Integer getAddOnWeightInt() {
+	public Double getAddOnWeightInt() {
 		return addOnWeightInt;
 	}
 
-	public void setAddOnWeightInt(Integer addOnWeightInt) {
+	public void setAddOnWeightInt(Double addOnWeightInt) {
 		this.addOnWeightInt = addOnWeightInt;
 	}
 

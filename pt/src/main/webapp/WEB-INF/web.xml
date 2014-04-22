@@ -122,6 +122,14 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
+	<!-- <servlet>
+        <servlet-name>UploadFile</servlet-name>
+        <servlet-class>org.tnt.pt.web.serverlet.UploadFile</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UploadFile</servlet-name>
+        <url-pattern>serverlet/UploadFile</url-pattern>
+    </servlet-mapping> -->
 	<session-config>
 		<session-timeout>20</session-timeout>
 	</session-config>

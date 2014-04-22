@@ -36,7 +36,9 @@ import org.tnt.pt.entity.Exam;
 import org.tnt.pt.entity.GEOSummary;
 import org.tnt.pt.entity.HWRate;
 import org.tnt.pt.entity.PTSLoad;
+import org.tnt.pt.entity.Rate;
 import org.tnt.pt.entity.Tariff;
+import org.tnt.pt.entity.TariffGroup;
 import org.tnt.pt.entity.WeightBand;
 import org.tnt.pt.entity.ZoneGroup;
 import org.tnt.pt.entity.ZoneSummary;
@@ -47,6 +49,7 @@ import org.tnt.pt.service.baseInfo.BsmRgmService;
 import org.tnt.pt.service.baseInfo.CountryGeoService;
 import org.tnt.pt.service.baseInfo.CountryZoneService;
 import org.tnt.pt.service.baseInfo.ProductService;
+import org.tnt.pt.service.baseInfo.TariffGroupService;
 import org.tnt.pt.service.baseInfo.TariffService;
 import org.tnt.pt.service.baseInfo.WeightBandService;
 import org.tnt.pt.service.baseInfo.ZoneGroupService;
@@ -67,6 +70,7 @@ import org.tnt.pt.util.DoubleUtil;
 import org.tnt.pt.util.PTPARAMETERS;
 import org.tnt.pt.vo.BaseVO;
 import org.tnt.pt.vo.BusinessVO;
+import org.tnt.pt.vo.HWRateVO;
 import org.tnt.pt.vo.RevVO;
 
 /**
@@ -119,8 +123,9 @@ public class PTQueryController{
     BsmRgmService bsmRgmService;
     @Autowired
     AccountService accountService;
+    @Autowired
+    TariffGroupService tariffGroupService;
 	
-
     /**
 	 * 公斤_时区_折扣  详细页 新增
 	 * @param model
@@ -314,6 +319,16 @@ public class PTQueryController{
 		model.addAttribute("eonomy", zoneType.getEconomy());
 		model.addAttribute("ndocument", zoneType.getNonDocument());
 		
+		//查看该pt是否有导出价卡等功能
+		String exportFlag = "";
+		if(business.getState().equals(PTPARAMETERS.PROCESS_SATE[3])||
+				business.getState().equals(PTPARAMETERS.PROCESS_SATE[4])||
+				business.getState().equals(PTPARAMETERS.PROCESS_SATE[5])){
+			exportFlag = "yes";
+		}else{
+			exportFlag = "no";
+		}
+		model.addAttribute("exportFlag",exportFlag);
 		return "ptProcess/tariffPT";
 	}
 	
@@ -326,6 +341,20 @@ public class PTQueryController{
 	public String copy(Model model) {
 		List<Business> businessList = new ArrayList<Business>();
 		BusinessVO businessVO = new BusinessVO();
+		businessList = businessService.getBusinessByBusiness(businessVO);
+		model.addAttribute("businessList", businessList);
+		model.addAttribute("model", businessVO);
+		return "query/copyPTQuery";
+	}
+	
+	/**
+	 * copy 初始化
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="copyQuery", method = RequestMethod.POST)
+	public String copyQuery(Model model,@ModelAttribute BusinessVO businessVO) {
+		List<Business> businessList = new ArrayList<Business>();
 		businessList = businessService.getBusinessByBusiness(businessVO);
 		model.addAttribute("businessList", businessList);
 		model.addAttribute("model", businessVO);
@@ -506,10 +535,12 @@ public class PTQueryController{
 	 * @return
 	 */
 	@RequestMapping(value="deletePT", method = RequestMethod.POST)
-	public String deletePT(Model model,@ModelAttribute BusinessVO businessVO) {
+	public String deletePT(Model model,@ModelAttribute BusinessVO businessVO,HttpServletRequest request) {
 		Long businessId = Long.parseLong(businessVO.getId());
 		businessService.deleteBusiness(businessId);
 		List<Business> businessList = new ArrayList<Business>();
+		User user = (User) request.getSession().getAttribute("user");
+		businessVO.setUserName(user.getUserName());
 		businessList = businessService.getBusinessByBusiness(businessVO);
 		model.addAttribute("businessList", businessList);
 		model.addAttribute("model",businessVO);
@@ -735,6 +766,7 @@ public class PTQueryController{
 		List<Business> businessList = new ArrayList<Business>();
 		BusinessVO businessVO = new BusinessVO();
 		businessVO.setState(PTPARAMETERS.PROCESS_SATE[2]);
+		businessVO.setDepot(depotCode);
 		businessList = businessService.getBusinessByBusiness(businessVO);
 		model.addAttribute("businessList", businessList);
 		model.addAttribute("model",businessVO);
@@ -752,7 +784,6 @@ public class PTQueryController{
 		List<ZoneType> zoneTypeList = new ArrayList<ZoneType>();
 		zoneTypeList =  zoneTypeService.getAllZoneType();
 		Map hashMap = new HashMap();
-		
 		hashMap.put("baseVO", new BaseVO());
 		if(zoneTypeList.size()>0){
 			ZoneType zoneType = zoneTypeList.get(0);
@@ -1088,9 +1119,279 @@ public class PTQueryController{
 	}
 	
 	/**
-	 * 公斤_时区_折扣  详细页 新增
+	 * summaryInfo 详细页
 	 * @param model
 	 * @return
+	 */
+	@RequestMapping(value="summaryInfo/{id}", method = RequestMethod.GET)
+	public String summaryInfo(Model model,@PathVariable("id") Long id) {
+		
+		List<ZoneGroup> zoneGroupList = new ArrayList<ZoneGroup>();
+		List<WeightBand> documentList = new ArrayList<WeightBand>();
+		List<WeightBand> ndocumentList = new ArrayList<WeightBand>();
+		List<WeightBand> eonomyList = new ArrayList<WeightBand>();
+		List<ZoneSummary> zoneSummaryList = new ArrayList<ZoneSummary>();
+		List<GEOSummary> geoSummaryList = new ArrayList<GEOSummary>();
+		List<ZoneSummary> recZoneSummaryList = new ArrayList<ZoneSummary>();
+		List<GEOSummary> recGeoSummaryList = new ArrayList<GEOSummary>();
+		List<Discount> discountList = new ArrayList<Discount>();
+		List<Discount> recDiscountList = new ArrayList<Discount>();
+
+		List<RevVO> revList = new ArrayList<RevVO>();
+		Map<String,Long> discountMap = new HashMap<String,Long>();//形成折扣map 方便查询
+		Map<String,Long> recDiscountMap = new HashMap<String,Long>();//形成折扣map 方便查询
+		Business business = new Business();
+		ZoneType zoneType = new ZoneType();
+		Customer customer = new Customer();
+		ZoneSummary zoneSummary = new ZoneSummary();
+		ZoneSummary recZoneSummary = new ZoneSummary();
+		String[] groupBy = {"zoneGroupId"};
+		business = businessService.getBusiness(id);
+		customer = customerService.getCustomer(business.getCustomerId());
+		zoneType = zoneTypeService.getZoneTypeByZoneType(business.getZoneType());//zonetype类型
+		
+		zoneGroupList =  zonegroupService.getAllZoneGroupByZoneType(business.getZoneType());
+		
+		documentList = weightBandService.getAllWeightBandByProductId(zoneType.getDocument());
+		ndocumentList = weightBandService.getAllWeightBandByProductId(zoneType.getNonDocument());
+		eonomyList = weightBandService.getAllWeightBandByProductId(zoneType.getEconomy());
+		
+		String flag = "";//标识是否需要两套数据展示
+		flag = customer.getPayment();
+		if(customer.getPayment().equals(PTPARAMETERS.PAYMENT[2])&&business.getIsFollow().equals("NO")){//如果选择的是both 并且 isfollow为no  此时需要展示两个tab页
+			geoSummaryList = geoSummaryService.getAllGeoSummaryByBusinessId(business.getId(),PTPARAMETERS.PAYMENT[0]);
+			recZoneSummaryList = zoneSummaryService.getAllZoneSummaryByBusinessId(business.getId(),PTPARAMETERS.PAYMENT[1]);
+			recGeoSummaryList = geoSummaryService.getAllGeoSummaryByBusinessId(business.getId(),PTPARAMETERS.PAYMENT[1]);
+			discountList = discountService.getAllDiscountByBusId(id,PTPARAMETERS.PAYMENT[0]);
+			recDiscountList = discountService.getAllDiscountByBusId(id,PTPARAMETERS.PAYMENT[1]);
+			for (Discount discount:recDiscountList) {
+				recDiscountMap.put(discount.getWeightBandId()+"_"+discount.getZoneGroupId(), discount.getDiscount());
+			}
+			revList = revService.getGroupBy(business.getId(),groupBy,PTPARAMETERS.PAYMENT[0]);
+			for (RevVO rev : revList) {
+				ZoneSummary zs = new ZoneSummary();
+				zs.setConsM(rev.getCons());
+				zs.setConsY(DoubleUtil.get2Double(rev.getCons()*12));
+				zs.setKiloM(rev.getKilo());
+				zs.setKiloY(DoubleUtil.get2Double(rev.getKilo()*12));
+				zs.setRevM(rev.getRev());
+				zs.setRevY(DoubleUtil.get2Double(rev.getRev()*12));
+				zs.setZoneType(rev.getZone());
+				zoneSummaryList.add(zs);
+			}
+			/**
+			 * 获取汇总信息
+			 */
+			String[] groupBy_1 = {};
+			RevVO revVO = revService.getGroupBy(business.getId(),groupBy_1,PTPARAMETERS.PAYMENT[0]).get(0);
+			zoneSummary.setConsM(revVO.getCons());
+			zoneSummary.setConsY(DoubleUtil.get2Double(revVO.getCons()*12));
+			zoneSummary.setKiloM(revVO.getKilo());
+			zoneSummary.setKiloY(DoubleUtil.get2Double(revVO.getKilo()*12));
+			zoneSummary.setRevM(revVO.getRev());
+			zoneSummary.setRevY(DoubleUtil.get2Double(revVO.getRev()*12));
+			revList = null;
+			revList = revService.getGroupBy(business.getId(),groupBy,PTPARAMETERS.PAYMENT[1]);
+			for (RevVO rev : revList) {
+				ZoneSummary zs = new ZoneSummary();
+				zs.setConsM(rev.getCons());
+				zs.setConsY(DoubleUtil.get2Double(rev.getCons()*12));
+				zs.setKiloM(rev.getKilo());
+				zs.setKiloY(DoubleUtil.get2Double(rev.getKilo()*12));
+				zs.setRevM(rev.getRev());
+				zs.setRevY(DoubleUtil.get2Double(rev.getRev()*12));
+				zs.setZoneType(rev.getZone());
+				recZoneSummaryList.add(zs);
+			}
+			/**
+			 * 获取汇总信息
+			 */
+			revVO = null;
+			revVO = revService.getGroupBy(business.getId(),groupBy_1,PTPARAMETERS.PAYMENT[1]).get(0);
+			recZoneSummary.setConsM(revVO.getCons());
+			recZoneSummary.setConsY(DoubleUtil.get2Double(revVO.getCons()*12));
+			recZoneSummary.setKiloM(revVO.getKilo());
+			recZoneSummary.setKiloY(DoubleUtil.get2Double(revVO.getKilo()*12));
+			recZoneSummary.setRevM(revVO.getRev());
+			recZoneSummary.setRevY(DoubleUtil.get2Double(revVO.getRev()*12));
+			
+		}else if(customer.getPayment().equals(PTPARAMETERS.PAYMENT[2])&&business.getIsFollow().equals("YES")){//如果选择的是both 并且 isfollow为YES  此时需要展示两个同样的tab页
+			geoSummaryList = geoSummaryService.getAllGeoSummaryByBusinessId(business.getId(),PTPARAMETERS.PAYMENT[2]);
+			recZoneSummaryList = zoneSummaryService.getAllZoneSummaryByBusinessId(business.getId(),PTPARAMETERS.PAYMENT[2]);
+			recGeoSummaryList = geoSummaryService.getAllGeoSummaryByBusinessId(business.getId(),PTPARAMETERS.PAYMENT[2]);
+			discountList = discountService.getAllDiscountByBusId(id,PTPARAMETERS.PAYMENT[2]);//都取both
+			recDiscountList = discountService.getAllDiscountByBusId(id,PTPARAMETERS.PAYMENT[2]);
+			for (Discount discount:recDiscountList) {
+				recDiscountMap.put(discount.getWeightBandId()+"_"+discount.getZoneGroupId(), discount.getDiscount());
+			}
+			revList = revService.getGroupBy(business.getId(),groupBy,PTPARAMETERS.PAYMENT[2]);
+			for (RevVO rev : revList) {
+				ZoneSummary zs = new ZoneSummary();
+				zs.setConsM(rev.getCons());
+				zs.setConsY(DoubleUtil.get2Double(rev.getCons()*12));
+				zs.setKiloM(rev.getKilo());
+				zs.setKiloY(DoubleUtil.get2Double(rev.getKilo()*12));
+				zs.setRevM(rev.getRev());
+				zs.setRevY(DoubleUtil.get2Double(rev.getRev()*12));
+				zs.setZoneType(rev.getZone());
+				zoneSummaryList.add(zs);
+			}
+			/**
+			 * 获取汇总信息
+			 */
+			String[] groupBy_1 = {};
+			RevVO revVO = revService.getGroupBy(business.getId(),groupBy_1,PTPARAMETERS.PAYMENT[2]).get(0);
+			zoneSummary.setConsM(revVO.getCons());
+			zoneSummary.setConsY(DoubleUtil.get2Double(revVO.getCons()*12));
+			zoneSummary.setKiloM(revVO.getKilo());
+			zoneSummary.setKiloY(DoubleUtil.get2Double(revVO.getKilo()*12));
+			zoneSummary.setRevM(revVO.getRev());
+			zoneSummary.setRevY(DoubleUtil.get2Double(revVO.getRev()*12));
+		}else{
+			zoneSummaryList = zoneSummaryService.getAllZoneSummaryByBusinessId(business.getId(),customer.getPayment());
+			geoSummaryList = geoSummaryService.getAllGeoSummaryByBusinessId(business.getId(),customer.getPayment());
+			discountList = discountService.getAllDiscountByBusId(id,customer.getPayment());
+			revList = revService.getGroupBy(business.getId(),groupBy,customer.getPayment());
+			for (RevVO rev : revList) {
+				ZoneSummary zs = new ZoneSummary();
+				zs.setConsM(rev.getCons());
+				zs.setConsY(DoubleUtil.get2Double(rev.getCons()*12));
+				zs.setKiloM(rev.getKilo());
+				zs.setKiloY(DoubleUtil.get2Double(rev.getKilo()*12));
+				zs.setRevM(rev.getRev());
+				zs.setRevY(DoubleUtil.get2Double(rev.getRev()*12));
+				zs.setZoneType(rev.getZone());
+				zoneSummaryList.add(zs);
+			}
+			/**
+			 * 获取汇总信息
+			 */
+			String[] groupBy_1 = {};
+			RevVO revVO = revService.getGroupBy(business.getId(),groupBy_1,customer.getPayment()).get(0);
+			zoneSummary.setConsM(revVO.getCons());
+			zoneSummary.setConsY(DoubleUtil.get2Double(revVO.getCons()*12));
+			zoneSummary.setKiloM(revVO.getKilo());
+			zoneSummary.setKiloY(DoubleUtil.get2Double(revVO.getKilo()*12));
+			zoneSummary.setRevM(revVO.getRev());
+			zoneSummary.setRevY(DoubleUtil.get2Double(revVO.getRev()*12));
+		}
+		for (Discount discount:discountList) {
+			discountMap.put(discount.getWeightBandId()+"_"+discount.getZoneGroupId(), discount.getDiscount());
+		}
+		model.addAttribute("flag", flag);
+		model.addAttribute("business", business);
+		model.addAttribute("customer", customer);
+		model.addAttribute("geoSummaryList", geoSummaryList);
+		model.addAttribute("zoneSummaryList", zoneSummaryList);
+		model.addAttribute("zoneGroupList", zoneGroupList);
+		model.addAttribute("recZoneSummaryList", recZoneSummaryList);
+		model.addAttribute("recGeoSummaryList", recGeoSummaryList);
+		model.addAttribute("documentList", documentList);
+		model.addAttribute("ndocumentList", ndocumentList);
+		model.addAttribute("eonomyList", eonomyList);
+		model.addAttribute("zoneSummary", zoneSummary);
+		model.addAttribute("recZoneSummary", recZoneSummary);
+		model.addAttribute("economyList", eonomyList);
+		model.addAttribute("recDiscountMap", recDiscountMap);
+		model.addAttribute("discountMap", discountMap);
+		return "ptProcess/summaryInfo";
+	}
+	
+	/**
+	 * 公斤_时区_折扣  详细页
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="rates/{businessId}", method = RequestMethod.GET)
+	public String rates(Model model,@PathVariable("businessId") Long businessId) {
+		String flag = "";
+		/**
+		 * 该处为保存该pt下折扣信息代码
+		 */
+		List<ZoneType> zoneTypeList = new ArrayList<ZoneType>();
+		/**
+		 * 假如zonetype不为空，则默认初始加载的为第一个zonetype
+		 */
+		zoneTypeList =  zoneTypeService.getAllZoneType();
+		Map<String,Double> traiffMapSP = new HashMap<String,Double>();//形成折扣map 方便查询
+		Map<String,Double> traiffMapRP = new HashMap<String,Double>();//形成折扣map 方便查询
+		
+		List<Tariff> documentListSP = new ArrayList<Tariff>();
+		List<Tariff> ndocumentListSP = new ArrayList<Tariff>();
+		List<Tariff> eonomyListSP = new ArrayList<Tariff>();
+		List<Tariff> documentListRP = new ArrayList<Tariff>();
+		List<Tariff> ndocumentListRP = new ArrayList<Tariff>();
+		List<Tariff> eonomyListRP = new ArrayList<Tariff>();
+		
+		List<TariffGroup> GdocumentListSP = new ArrayList<TariffGroup>();
+		List<TariffGroup> GndocumentListSP = new ArrayList<TariffGroup>();
+		List<TariffGroup> GeonomyListSP = new ArrayList<TariffGroup>();
+		List<TariffGroup> GdocumentListRP = new ArrayList<TariffGroup>();
+		List<TariffGroup> GndocumentListRP = new ArrayList<TariffGroup>();
+		List<TariffGroup> GeonomyListRP = new ArrayList<TariffGroup>();
+		
+		List<ZoneGroup> zoneGroupList = new ArrayList<ZoneGroup>();
+		ZoneType zoneType = new ZoneType();
+		Customer customer = new Customer();
+		Business business = businessService.getBusiness(businessId);
+		customer = customerService.getCustomer(business.getCustomerId());
+		zoneType = zoneTypeService.getZoneTypeByZoneType(business.getZoneType());//zonetype类型
+		
+		zoneGroupList =  zonegroupService.getAllZoneGroupByZoneType(business.getZoneType());
+		
+		documentListSP = examService.getTariff(businessId, PTPARAMETERS.PAYMENT[0], zoneType.getDocument());
+		ndocumentListSP = examService.getTariff(businessId, PTPARAMETERS.PAYMENT[0], zoneType.getNonDocument());
+		eonomyListSP = examService.getTariff(businessId, PTPARAMETERS.PAYMENT[0], zoneType.getEconomy());
+		documentListRP = examService.getTariff(businessId, PTPARAMETERS.PAYMENT[1], zoneType.getDocument());
+		ndocumentListRP = examService.getTariff(businessId, PTPARAMETERS.PAYMENT[1], zoneType.getNonDocument());
+		eonomyListRP = examService.getTariff(businessId, PTPARAMETERS.PAYMENT[1], zoneType.getEconomy());
+		
+		GdocumentListSP = tariffGroupService.getAllTariffGroup(zoneType.getDocument(),PTPARAMETERS.PAYMENT[0]);
+		GndocumentListSP = tariffGroupService.getAllTariffGroup(zoneType.getNonDocument(),PTPARAMETERS.PAYMENT[0]);
+		GeonomyListSP = tariffGroupService.getAllTariffGroup(zoneType.getEconomy(),PTPARAMETERS.PAYMENT[0]);
+		GdocumentListRP = tariffGroupService.getAllTariffGroup(zoneType.getDocument(),PTPARAMETERS.PAYMENT[1]);
+		GndocumentListRP = tariffGroupService.getAllTariffGroup(zoneType.getNonDocument(),PTPARAMETERS.PAYMENT[1]);
+		GeonomyListRP = tariffGroupService.getAllTariffGroup(zoneType.getEconomy(),PTPARAMETERS.PAYMENT[1]);
+		flag = customer.getPayment();
+		for (Tariff tariff:documentListSP) {
+			traiffMapSP.put(tariff.getTariffGroupId()+"_"+tariff.getZoneGroupId(), tariff.getTariff());
+		}
+		for (Tariff tariff:ndocumentListSP) {
+			traiffMapSP.put(tariff.getTariffGroupId()+"_"+tariff.getZoneGroupId(), tariff.getTariff());
+		}
+		for (Tariff tariff:eonomyListSP) {
+			traiffMapSP.put(tariff.getTariffGroupId()+"_"+tariff.getZoneGroupId(), tariff.getTariff());
+		}
+		for (Tariff tariff:documentListRP) {
+			traiffMapRP.put(tariff.getTariffGroupId()+"_"+tariff.getZoneGroupId(), tariff.getTariff());
+		}
+		for (Tariff tariff:ndocumentListRP) {
+			traiffMapRP.put(tariff.getTariffGroupId()+"_"+tariff.getZoneGroupId(), tariff.getTariff());
+		}
+		for (Tariff tariff:eonomyListRP) {
+			traiffMapRP.put(tariff.getTariffGroupId()+"_"+tariff.getZoneGroupId(), tariff.getTariff());
+		}
+		
+		model.addAttribute("flag", flag);
+		model.addAttribute("business", business);
+		model.addAttribute("customer", customer);
+		model.addAttribute("zoneGroupList", zoneGroupList);
+		model.addAttribute("documentTGList", GdocumentListSP);
+		model.addAttribute("ndocumentTGList", GndocumentListSP);
+		model.addAttribute("economyTGList", GeonomyListSP);
+		model.addAttribute("documentTGListR", GdocumentListRP);
+		model.addAttribute("ndocumentTGListR", GndocumentListRP);
+		model.addAttribute("economyTGListR", GeonomyListRP);
+		model.addAttribute("traiffMapRP", traiffMapRP);
+		model.addAttribute("traiffMapSP", traiffMapSP);
+		
+		return "ptProcess/rateInfo";
+	}
+	
+	/**
+	 * 公斤_时区_折扣  详细页 新增
+	 * @param model
+	 * @return 
 	 */
 	@RequestMapping(value="stateLog/{id}", method = RequestMethod.GET)
 	public String stateLog(Model model,@PathVariable("id") Long id) {
@@ -1098,6 +1399,7 @@ public class PTQueryController{
 		SimpleDateFormat sdfDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Map map = new HashMap();
 		map.put("businessId", id);
+//		Business business = businessService.getBusiness(id);
 		statusList = examService.getStatusLog(map);
 		for(Exam exam:statusList){
 			exam.setShowTime(sdfDateFormat.format(exam.getExamTime()));

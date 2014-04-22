@@ -16,6 +16,10 @@ public class Exam {
 
 	private String showTime;
 	
+	private String filePath = "";
+	
+	private String fileName = "";
+	
 	public Long getId() {
 		return id;
 	}
@@ -62,6 +66,22 @@ public class Exam {
 
 	public void setShowTime(String showTime) {
 		this.showTime = showTime;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 	
 }

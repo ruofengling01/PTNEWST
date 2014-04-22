@@ -547,7 +547,7 @@
     </table>
 <br />
 </div>
-<div class="tabPageSelected" id="conDIVrec">
+<div class="tabPageUnSelected" id="conDIVrec">
 <table class="table_B" width="100%">
         <thead>
 						<tr align="center">
@@ -624,7 +624,7 @@
 </table>
 </br>
 </div>
-<div class="tabPageSelected" id="hwDIVrec">
+<div class="tabPageUnSelected" id="hwDIVrec">
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
@@ -698,7 +698,12 @@
 <span style="width:20%">Account &nbsp;&nbsp;#: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-<input type="text" name="account" id="account" />
+<c:if test="${customer.account=='777777777'}">
+	<input type="text" name="account" id="account" maxlength="9"/>
+</c:if>
+<c:if test="${customer.account!='777777777'}">
+	<input type="text" name="account" id="account" readOnly />
+</c:if>
 </div>
 <br />
 <div style="width:100%">
@@ -721,10 +726,10 @@ Reason for Rejection:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </div>
 <script type="text/javascript">
 window.confirm = function(str)   
-{   
+	{   
       execScript("n = (msgbox('"+str+"',vbYesNo, '提示')=vbYes)", "vbscript");   
-      return(n);   
-}
+      return(n);
+	}
     $(function(){
         $("#Approve").click(function(){
 	        var examOppion = document.getElementById("examOppion").value;
@@ -737,14 +742,22 @@ window.confirm = function(str)
 	    			document.getElementById("examOppion").focus();
 	    			return;
 	    		}
-	    		
 	    	}
+	        if(account!=''){
+	        	if(accountNo.length < 9){
+		    		while(accountNo.length < 9){
+		    			accountNo = "0"+accountNo;
+		    		}
+		    		$("#account").val(accountNo);
+		    	}
+	        }
             $.ajax({
                 type:"POST",
                 url:"${ctx}/ptApprove/billingApprove",
                 data:"id="+document.getElementById("hiddenID").value+"&examOppion="+examOppion+"&effectiveDate="+effectiveDate+"&account="+account,
                 success:function(data){
                 	alert('Approve success !');
+                	window.location.href="${ctx}/ptQuery/PTSLoadInit";
                 },error:function(e) {
                     alert("error："+e);
                 }

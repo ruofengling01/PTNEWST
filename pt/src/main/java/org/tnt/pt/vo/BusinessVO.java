@@ -39,6 +39,10 @@ public class BusinessVO extends BaseVO{
 	private String userName;
 	
 	private String channel;
+	
+	private String fileName;
+	
+	private String filePath;
 	/**
 	 * @return the id
 	 */
@@ -229,6 +233,22 @@ public class BusinessVO extends BaseVO{
 
 	public void setStatusList(List<String> statusList) {
 		this.statusList = statusList;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 
 }

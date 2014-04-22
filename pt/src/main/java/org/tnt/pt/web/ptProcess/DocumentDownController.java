@@ -50,6 +50,7 @@ import org.tnt.pt.service.ptProcess.RateService;
 import org.tnt.pt.service.ptProcess.SpecificConsignmentSetService;
 import org.tnt.pt.service.ptProcess.SpecificCountryService;
 import org.tnt.pt.service.ptProcess.ZoneSummaryService;
+import org.tnt.pt.util.FileToPdf;
 import org.tnt.pt.util.FileUtil;
 import org.tnt.pt.util.PTPARAMETERS;
 import org.tnt.pt.vo.BusinessVO;
@@ -352,7 +353,8 @@ public class DocumentDownController {
 	list4 = removeDuplicateWithOrder(list4);
 	try {
 		pdfPathString = pdfPathString+"\\"+"Finacial-"+business.getApplicationReference()+".pdf";
-		FileOutputStream fos = new FileOutputStream(pdfPathString);
+//		FileToPdf.els2pdf(request.getSession().getServletContext().getRealPath("/attached/temp/Rate.xlsx"), pdfPathString);
+		FileOutputStream fos = new FileOutputStream(pdfPathString,true);
 		response.setContentType("application/pdf;charset=utf-8");
 		response.setHeader("Content-Disposition", "attachment;filename="
 				+ new String(("RateCard-"+business.getApplicationReference()+".pdf").getBytes(), "ISO8859-1"));

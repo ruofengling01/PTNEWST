@@ -7,6 +7,7 @@ public class Rate extends IdEntity {
 	private Long businessId;
 	private Long tariffGroupId;
 	private Long zoneGroupId;
+	private String payment;
 	
 	public Rate() {
 	}
@@ -46,6 +47,14 @@ public class Rate extends IdEntity {
 
 	public void setZoneGroupId(Long zoneGroupId) {
 		this.zoneGroupId = zoneGroupId;
+	}
+	
+	public String getPayment() {
+		return payment;
+	}
+
+	public void setPayment(String payment) {
+		this.payment = payment;
 	}
 
 	@Override

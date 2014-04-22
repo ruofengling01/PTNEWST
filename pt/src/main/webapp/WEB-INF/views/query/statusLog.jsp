@@ -26,6 +26,7 @@
                 <th>Time</th>
                 <th>User Name</th>
                 <th>Oppion</th>
+                <th>File</th>
             </tr>
         </thead>
         <tbody>
@@ -34,6 +35,7 @@
 				<td>${exam.showTime}</td>
 				<td>${exam.userName}</td>
 				<td>${exam.examOppion}</td>
+				<td><a href="${exam.filePath}">${exam.fileName}</a></td>
 			   </tr>
 			</c:forEach>
         </tbody>

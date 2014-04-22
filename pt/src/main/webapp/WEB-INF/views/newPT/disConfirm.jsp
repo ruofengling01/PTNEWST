@@ -90,7 +90,7 @@ response.setDateHeader("Expires", -10);
   <div style="text-align: center">
   <input type="button" value="Previous" class="cls-button" id="Previous"/> 
    	&nbsp;&nbsp;&nbsp;<input type="button" value="Next" class="cls-button" id="next" />
-   	 &nbsp;&nbsp;&nbsp;<input type="button" value="Close" class="cls-button" id="index.html" onclick="window.location.href='index.html';"/>
+   	 &nbsp;&nbsp;&nbsp;<input type="button" value="Close" class="cls-button" id="index.html" onclick="window.location.href='${ctx}/ptQuery/ptModifyInit';"/>
    </div>
    <input type="hidden" id="isFollow" value="${isFollow}" name="isFollow">
    <input type="hidden" id="payment" value="${payment}" name="payment">

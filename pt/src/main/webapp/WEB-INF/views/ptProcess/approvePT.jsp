@@ -26,10 +26,10 @@
 		      <td>Account :</td>
 		      <td><input type="text" name="account" value="${model.account}"></td>
 		      <td>depot:</td>
-		      <td><selec name="depot" value="${model.depot}">
+		      <td><select name="depot" value="${model.depot}">
 		      <option value="">请选择</option> 
-		      <c:forEach items="${depotList}" var="depot">
-		      		<option value="${depots}" <c:if test="${depots==model.depot}">selected</c:if>>${depots}</option> 
+		      <c:forEach items="${depotList}" var="depots">
+		      	<option value="${depots}" <c:if test="${depots==model.depot}">selected</c:if>>${depots}</option> 
 		      </c:forEach>
 		      </select></td>
 		     </tr>
@@ -97,7 +97,7 @@
     });
 
     function stateLog(val){
-   	  window.showModalDialog('${ctx}/ptQuery/stateLog/'+val,'','dialogHeight:300px; dialogWidth: 400px;');
+   	  window.showModalDialog('${ctx}/ptQuery/stateLog/'+val,'','dialogHeight:300px; dialogWidth: 650px;');
      }
     function showDetailTariff(val){
     	window.location.href="${ctx}/ptQuery/tariffPT/"+val;

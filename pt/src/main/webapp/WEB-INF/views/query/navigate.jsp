@@ -77,6 +77,7 @@ a{
 <script language="javascript">
 
 	function doNavigate(inPageId) {
+		document.getElementById("ptQueryForm").target = "dialogFrame";
 		$("input[name='navigate.pageId']").val(inPageId);
         document.forms[0].submit();
     }

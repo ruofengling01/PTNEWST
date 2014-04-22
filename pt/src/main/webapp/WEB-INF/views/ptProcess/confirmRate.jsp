@@ -100,7 +100,7 @@ $(document).ready(function(){
     });
 
     function stateLog(val){
-    	  window.showModalDialog('${ctx}/ptQuery/stateLog/'+val,'','dialogHeight:300px; dialogWidth: 400px;');
+    	  window.showModalDialog('${ctx}/ptQuery/stateLog/'+val,'','dialogHeight:300px; dialogWidth: 650px;');
       }
 	function showDetail(val){
 		window.location.href="${ctx}/ptApprove/tariffPTApprove/"+val;

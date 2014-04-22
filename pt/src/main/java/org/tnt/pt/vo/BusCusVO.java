@@ -8,6 +8,8 @@ public class BusCusVO {
 	Customer customer = new Customer();
 	String isFollow = "";
 	String payment = "";
+	String isModify =  "";
+	
 	public Business getBusiness() {
 		return business;
 	}
@@ -31,6 +33,12 @@ public class BusCusVO {
 	}
 	public void setPayment(String payment) {
 		this.payment = payment;
+	}
+	public String getIsModify() {
+		return isModify;
+	}
+	public void setIsModify(String isModify) {
+		this.isModify = isModify;
 	}
 	
 	

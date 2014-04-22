@@ -97,7 +97,15 @@
 			<![CDATA[select SEQ_BUSINESS.NEXTVAL AS id FROM DUAL]]>  
 		</selectKey> 
 		insert into pt_exam
-		values (#{id}, #{businessId},#{examOppion},#{examTime},#{userName})
+		values (#{id}, #{businessId},#{examOppion},#{examTime},#{userName},#{filePath},#{fileName})
+	</insert>
+	
+	<insert id="insertCusLog" parameterType="org.tnt.pt.entity.CustomerLog" >
+		<selectKey  resultType="java.lang.Long" keyProperty="id"  order="BEFORE">  
+			<![CDATA[select SEQ_BUSINESS.NEXTVAL AS id FROM DUAL]]>  
+		</selectKey> 
+		insert into pt_customerLog
+		values (#{id}, #{newCustomer},#{oldCustomer},#{userName},#{describeString},#{busId})
 	</insert>
 	
 	<delete id="delete" parameterType="Long">
@@ -169,7 +177,7 @@
 	</select>
 	
 	<select id="getStatusLog" parameterType="map" resultType="org.tnt.pt.entity.Exam">
-		select * from pt_exam where businessId = #{businessId}
+		select * from pt_exam where businessId = #{businessId} order by id
 	</select>
 	
 </mapper> 

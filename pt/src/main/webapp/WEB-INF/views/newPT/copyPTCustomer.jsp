@@ -120,7 +120,7 @@
   <div style="text-align: center">
   <input type="button" value="Submit" class="cls-button" onclick="tothenext(this)" /> 
    	&nbsp;&nbsp;&nbsp;<input type="button" value="Copy" class="cls-button"  id="copy" />
-   	 &nbsp;&nbsp;&nbsp;<input type="button" value="Close" class="cls-button" onclick="window.location.href='index.html';"/>
+   	 &nbsp;&nbsp;&nbsp;
    	
    </div>
 </form>

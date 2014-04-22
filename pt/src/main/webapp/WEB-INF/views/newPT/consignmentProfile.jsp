@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+﻿<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="org.tnt.pt.util.PTPARAMETERS"%>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
@@ -84,9 +84,7 @@ response.setDateHeader("Expires", -10);
       <th>PT Application Reference #: </th>
       <td>${business.applicationReference}<input type="hidden" value="${business.applicationReference}" name="business.applicationReference"></td>
       <th>Terms of payments:</th>
-      <td style="background-color:yellow">
-      <span><B>${payment}<input type="hidden" value="${customer.payment}" name="customer.payment"></B></span>
-      </td>
+      <td>${payment}<input type="hidden" value="${customer.payment}" name="customer.payment"></td>
       </tr>
   </table>
   </div>
@@ -115,8 +113,10 @@ response.setDateHeader("Expires", -10);
 					<td>${weightBand.name}</td>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
+						<c:set var="key1">${zoneType.document}_${zoneGroup.id}</c:set>
 							<td><input onfocusout="doValidate(this)" id="zg_${key}_${business.id}" name="zg_${key}_${business.id}"  size="4" 
-							value="<c:choose><c:when test="${consignmentMap[key] == null}">0</c:when><c:otherwise>${consignmentMap[key]}</c:otherwise></c:choose>" size="4"/></td>
+							value="<c:choose><c:when test="${consignmentMap[key] == null}">0</c:when><c:otherwise>${consignmentMap[key]}</c:otherwise></c:choose>" size="4"
+							<c:choose><c:when test="${ishwRateMap[key1] ==null}"></c:when><c:otherwise>readonly style="background-color:#EFEFEF"</c:otherwise></c:choose>/></td>
 				   </c:forEach>
 			   </tr>
 			</c:forEach>
@@ -141,8 +141,10 @@ response.setDateHeader("Expires", -10);
 					<td>${weightBand.name}</td>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
+						<c:set var="key1">${zoneType.nonDocument}_${zoneGroup.id}</c:set>
 							<td><input onfocusout="doValidate(this)" id="zg_${key}_${business.id}" name="zg_${key}_${business.id}"  size="4" 
-							value="<c:choose><c:when test="${consignmentMap[key] == null}">0</c:when><c:otherwise>${consignmentMap[key]}</c:otherwise></c:choose>" size="4"/></td>
+							value="<c:choose><c:when test="${consignmentMap[key] == null}">0</c:when><c:otherwise>${consignmentMap[key]}</c:otherwise></c:choose>" size="4"
+							<c:choose><c:when test="${ishwRateMap[key1] ==null}"></c:when><c:otherwise>readonly style="background-color:#EFEFEF"</c:otherwise></c:choose> /></td>
 				   </c:forEach>
 			   </tr>
 			  </c:forEach>
@@ -167,8 +169,10 @@ response.setDateHeader("Expires", -10);
 					<td>${weightBand.name}</td>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
+						<c:set var="key1">${zoneType.economy}_${zoneGroup.id}</c:set>
 						<td><input onfocusout="doValidate(this)" id="zg_${key}_${business.id}" name="zg_${key}_${business.id}" 
-value="<c:choose><c:when test="${consignmentMap[key] == null}">0</c:when><c:otherwise>${consignmentMap[key]}</c:otherwise></c:choose>" size="4"/></td>
+value="<c:choose><c:when test="${consignmentMap[key] == null}">0</c:when><c:otherwise>${consignmentMap[key]}</c:otherwise></c:choose>" size="4"
+  <c:choose><c:when test="${ishwRateMap[key1] ==null}"></c:when><c:otherwise>readonly style="background-color:#EFEFEF"</c:otherwise></c:choose> /></td>
 				   </c:forEach>
 			   </tr>
 			  </c:forEach>
@@ -193,7 +197,7 @@ value="<c:choose><c:when test="${consignmentMap[key] == null}">0</c:when><c:othe
   <div style="text-align: center">
   <input type="button" value="Back" class="cls-button" id="Back"/> 
    	&nbsp;&nbsp;&nbsp;<input type="button" value="Next" class="cls-button"  id="next" />
-   	 &nbsp;&nbsp;&nbsp;<input type="button" value="Close" class="cls-button" onclick="window.location.href='index.html';"/>
+   	 &nbsp;&nbsp;&nbsp;<input type="button" value="Close" class="cls-button" onclick="window.location.href='${ctx}/ptQuery/ptModifyInit';"/>
    </div>
   <input type="hidden" id="isFollow" value="${isFollow}" name="isFollow">
    <input type="hidden" id="payment" value="${payment}" name="payment">
@@ -220,7 +224,7 @@ value="<c:choose><c:when test="${consignmentMap[key] == null}">0</c:when><c:othe
 		 $("#Back").click(function(){
 			 if($('#isFollow').val()=='NO'&&$('#payment').val()=='<%=PTPARAMETERS.PAYMENT[1]%>'){
 				 $('#payment').val('');
-              	 $("#consignment").attr('action',"${ctx}/ptModify/consProfile");
+              	 $("#consignment").attr('action',"${ctx}/ptModify/consProfile/${isHighWight}");
               	 $("#consignment").submit();
               }else{
             	  var ss = '${isHighWight}';

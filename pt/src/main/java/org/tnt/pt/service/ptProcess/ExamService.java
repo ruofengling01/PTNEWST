@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.tnt.pt.entity.Business;
 import org.tnt.pt.entity.BusinessFile;
+import org.tnt.pt.entity.CustomerLog;
 import org.tnt.pt.entity.Exam;
 import org.tnt.pt.entity.Tariff;
 import org.tnt.pt.repository.ExamDao;
@@ -25,12 +26,17 @@ import org.tnt.pt.vo.HWRateVO;
 @Transactional(readOnly = true)
 public class ExamService {
 
+	@Autowired
 	private ExamDao examDao;
 
 	public void insertExam(Exam exam) {
 		examDao.insert(exam);
 	}
 
+	public void insertCusLog(CustomerLog cusLog) {
+		examDao.insertCusLog(cusLog);
+	}
+	
 	public void insertFile(BusinessFile businessFile){
 		examDao.insertFile(businessFile);
 	}

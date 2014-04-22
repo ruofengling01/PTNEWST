@@ -5,7 +5,7 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+<head base target="_self">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>PT Query</title>
 <link href="${ctx}/static/styles/main.css" type="text/css" rel="stylesheet" />
@@ -27,8 +27,7 @@ $(document).ready(function(){
 
 });
 </script>
-<form action="${ctx}/ptQuery/queryPT" method="post" id="ptQueryForm" target="_self">
-
+<form action="${ctx}/ptQuery/copyQuery" method="post" id="ptQueryForm">
 <div>
 <div style="padding:0 5px 5px 5px;">
 <h4 style="float:left">PT List</h4>
@@ -65,11 +64,19 @@ $(document).ready(function(){
 			</c:forEach>
         </tbody>
     </table>
-    <%@ include file="/WEB-INF/tags/navigate.jsp"%>
+    <%@ include file="/WEB-INF/views/query/navigate.jsp"%>
   <br>    
 </form>
 </div>
 <script type="text/javascript">
+	window.attachEvent('onload', function(){   
+	   // alert(window.name);   
+	   if(window.name=""){ //判断窗体的name，防止查询或者翻页操作时弹出新窗口   
+	       document.getElementById("ptQueryForm").target = "dialogFrame";   
+	   }else if(window.name="dialogFrame"){//判断执行查询或翻页操作后，返回当前页面不刷新展现新数据   
+	       document.getElementById("ptQueryForm").target = "";   
+	   }   
+	});
     $(function(){
         $("#query").click(function(){
          $("#ptQueryForm").submit();

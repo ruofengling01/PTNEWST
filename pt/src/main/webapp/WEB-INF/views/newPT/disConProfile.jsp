@@ -66,11 +66,7 @@ response.setDateHeader("Expires", -10);
       </tr>
   </table>
   </div>
-  <div style="text-align:left;font-color:blue; ">
-  	<span style="color:blue;font-size:16">.Click <span style="background-color:#F16E1E;"> &nbsp;Zone &nbsp;
-	</span> if you want to set specific countries.</span>
-  	 	
-  </div>
+  
 <div style="padding:0 5px 5px 5px;">
 <div class="clearboth"> </div>
 <table class="table_B" width="100%">
@@ -81,7 +77,7 @@ response.setDateHeader("Expires", -10);
             <tr>
                 <th ondblclick="setSpecificCountry();">Weightband</th>
                 <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th ondblclick="setSpecificCountry(${zoneGroup.id},${zoneType.document});">${zoneGroup.zone}</th>
+						<th>${zoneGroup.zone}</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -106,7 +102,7 @@ response.setDateHeader("Expires", -10);
             <tr>
                 <th ondblclick="setSpecificCountry();">Weightband</th>
                 <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th ondblclick="setSpecificCountry(${zoneGroup.id},${zoneType.nonDocument});">${zoneGroup.zone}</th>
+						<th>${zoneGroup.zone}</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -131,7 +127,7 @@ response.setDateHeader("Expires", -10);
             <tr>
                 <th ondblclick="setSpecificCountry();">Weightband</th>
                 <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th ondblclick="setSpecificCountry(${zoneGroup.id},${zoneType.economy});">${zoneGroup.zone}</th>
+						<th>${zoneGroup.zone}</th>
 				</c:forEach>
             </tr>
         </thead>

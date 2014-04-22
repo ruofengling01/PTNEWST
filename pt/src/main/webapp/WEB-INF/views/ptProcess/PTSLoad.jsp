@@ -43,6 +43,8 @@
 					<td>${business.territory}</td>
 					<td align="left">
 					<a id="showDetail" href="#" onclick="showDetail('${business.id}')">Detail</a>
+					&nbsp;&nbsp;
+					<a id="stateLog" href="#" onclick="stateLog('${business.id}')">State Log</a>
 					</td>
 			   </tr>
 			</c:forEach>
@@ -60,6 +62,10 @@
        
     });
 
+    function stateLog(val){
+    	window.showModalDialog('${ctx}/ptQuery/stateLog/'+val,'','dialogHeight:300px; dialogWidth: 650px;');
+    }
+    
 	function showDetail(val){
 		window.location.href="${ctx}/ptApprove/tariffPTBillingApprove/"+val;
 	}

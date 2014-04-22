@@ -103,7 +103,6 @@ $(document).ready(function(){
         $("#query").click(function(){
          $("#ptQueryForm").submit();
         });
-       
     });
 
 	function showDetail(val){

@@ -79,7 +79,7 @@ response.setDateHeader("Expires", -10);
      <tr>
     <%--***************隐藏域********** --%>
     <input type="hidden" value="${business.customerId}" name="business.customerId">
-    <input type="hidden" value="${business.id}" name="business.id">
+    <input type="hidden" value="${business.id}" name="business.id" id="businessid">
     <input type="hidden" value="${business.zoneType}" name="business.zoneType">
     <%--***************隐藏域********** --%>
       <th>Account #:</th>
@@ -174,16 +174,15 @@ response.setDateHeader("Expires", -10);
    --%></div>
    <br>
   <div style="text-align: center">
-  <input type="button" value="Back" class="cls-button" id="Back"  /> 
-   	&nbsp;&nbsp;&nbsp;<input type="button" value="Next" class="cls-button"  id="next"  onclick="addContent(this);"/>
-   	 &nbsp;&nbsp;&nbsp;<input type="button" value="Close" class="cls-button" onclick="window.location.href='${ctx}/ptQuery/ptModifyInit';"/>
+  <input type="button" value="Return" class="cls-button" onclick="javascript:window.history.back();"/>
+   	&nbsp;&nbsp;&nbsp;<input type="button" value="Next" class="cls-button"  id="next"/>
    </div>
    <input type="hidden" id="isFollow" value="${isFollow}" name="isFollow">
    <input type="hidden" id="payment" value="${payment}" name="payment">
 </form>
 </div>
 <script type="text/javascript">
-	 
+var businessId = $('#businessid').val();
 	function doValidate(obj){
 		if(obj.value.indexOf('.')!=-1){
 			if(obj.value.length > obj.value.indexOf('.')+3){
@@ -238,16 +237,13 @@ response.setDateHeader("Expires", -10);
 		                 type:"POST",
 		                 url:"${ctx}/ptCreate/addHwRate/${payment}",
 		                 dataType:"json",      
-		                 contentType:"application/json",   
+		                 contentType:"application/json",
 		                 data:jsonString,
 		                 success:function(data){
 		                	 if($('#isFollow').val()=='NO'&&$('#payment').val()=='<%=PTPARAMETERS.PAYMENT[0]%>'){
-		                 		$("#hwRateProfile").attr('action',"${ctx}/ptCreate/hwRateProfile");
-		                 		$("#hwRateProfile").submit();
+		                		 window.location.href="${ctx}/ptApprove/hwRateProfile/"+businessId+"/no";
 		                 	}else{
-		                 		$('#payment').val('');
-			                 	$("#hwRateProfile").attr('action',"${ctx}/ptCreate/consProfile/hw");
-			                 	$("#hwRateProfile").submit();
+		                 		window.location.href="${ctx}/ptApprove/ptAnalysingAdjust/"+businessId;
 		                 	}
 		                 },
 		                 error:function(e) {
@@ -256,12 +252,9 @@ response.setDateHeader("Expires", -10);
 		             });
 	             }else{
 	            	 if($('#isFollow').val()=='NO'&&$('#payment').val()=='<%=PTPARAMETERS.PAYMENT[0]%>'){
-	              		$("#hwRateProfile").attr('action',"${ctx}/ptCreate/hwRateProfile");
-	              		$("#hwRateProfile").submit();
+	            		 window.location.href="${ctx}/ptApprove/hwRateProfile/"+businessId+"/no";
 	              	}else{
-	              		$('#payment').val('');
-		                $("#hwRateProfile").attr('action',"${ctx}/ptCreate/consProfile/hw");
-		                $("#hwRateProfile").submit();
+	              		window.location.href="${ctx}/ptApprove/ptAnalysingAdjust/"+businessId;
 	              	}
 	             }
         	 }

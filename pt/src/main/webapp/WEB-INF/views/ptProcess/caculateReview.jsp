@@ -44,12 +44,12 @@
 				<c:if test="${stat.last}">
 			   	<tr align="center" >
 	                <td colspan="${counter}">Total</td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.rev}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.cons}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.kilo}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.rpc}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.rpk}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.wpc}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.rev}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.cons}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.kilo}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.rpc}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.rpk}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.wpc}</fmt:formatNumber></td>
 					<td width="10%"></td>
 					<td width="10%"></td>
 			   </tr>
@@ -71,14 +71,14 @@
 							<td>${review.WEIGHTNAME}</td>
 						</c:if>
 					</c:forEach>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.rev}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.cons}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.kilo}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.rpc}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.rpk}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.wpc}</fmt:formatNumber></td>
-					<td width="10%"><fmt:formatNumber pattern="#.00">${review.fm}</fmt:formatNumber>%</td>
-					<td width="10%"><fmt:formatNumber pattern="#.00">${review.dm}</fmt:formatNumber>%</td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.rev}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.cons}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.kilo}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.rpc}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.rpk}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.wpc}</fmt:formatNumber></td>
+					<td width="10%"><fmt:formatNumber pattern="0.00">${review.fm}</fmt:formatNumber>%</td>
+					<td width="10%"><fmt:formatNumber pattern="0.00">${review.dm}</fmt:formatNumber>%</td>
 			   </tr>
 			   </c:if> 
 			</c:forEach>
@@ -107,12 +107,12 @@
 				<c:if test="${stats.last}">
 			   	<tr align="center" >
 	                <td colspan="${counter}">Total</td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.rev}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.cons}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.kilo}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.rpc}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.rpk}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.wpc}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.rev}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.cons}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.kilo}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.rpc}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.rpk}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.wpc}</fmt:formatNumber></td>
 					<td width="10%"></td>
 					<td width="10%"></td>
 			   </tr>
@@ -134,14 +134,14 @@
 							<td>${review.WEIGHTNAME}</td>
 						</c:if>
 					</c:forEach>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.rev}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.cons}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.kilo}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.rpc}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.rpk}</fmt:formatNumber></td>
-	                <td width="10%"><fmt:formatNumber pattern="#.00">${review.wpc}</fmt:formatNumber></td>
-					<td width="10%"><fmt:formatNumber pattern="#.00">${review.fm}</fmt:formatNumber>%</td>
-					<td width="10%"><fmt:formatNumber pattern="#.00">${review.dm}</fmt:formatNumber>%</td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.rev}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.cons}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.kilo}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.rpc}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.rpk}</fmt:formatNumber></td>
+	                <td width="10%"><fmt:formatNumber pattern="0.00">${review.wpc}</fmt:formatNumber></td>
+					<td width="10%"><fmt:formatNumber pattern="0.00">${review.fm}</fmt:formatNumber>%</td>
+					<td width="10%"><fmt:formatNumber pattern="0.00">${review.dm}</fmt:formatNumber>%</td>
 			   </tr>
 			   </c:if> 
 			</c:forEach>

@@ -13,14 +13,15 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.UUID;
 
-import javax.mail.Authenticator;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -43,12 +44,11 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Font;
-import org.hibernate.mapping.Array;
 import org.json.JSONArray;
-import org.openqa.selenium.net.OlderWindowsVersionEphemeralPortDetector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,6 +59,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.ModelAndView;
 import org.springside.modules.mapper.JsonMapper;
 import org.tnt.pt.dmsentity.User;
 import org.tnt.pt.entity.Business;
@@ -67,14 +68,13 @@ import org.tnt.pt.entity.Consignment;
 import org.tnt.pt.entity.Country;
 import org.tnt.pt.entity.CountryZone;
 import org.tnt.pt.entity.Customer;
+import org.tnt.pt.entity.CustomerLog;
 import org.tnt.pt.entity.Discount;
 import org.tnt.pt.entity.DiscountDefault;
 import org.tnt.pt.entity.Exam;
-import org.tnt.pt.entity.GEOSummary;
 import org.tnt.pt.entity.HWRate;
 import org.tnt.pt.entity.Product;
 import org.tnt.pt.entity.Rev;
-import org.tnt.pt.entity.Review;
 import org.tnt.pt.entity.SpecificConsignmentSet;
 import org.tnt.pt.entity.Tariff;
 import org.tnt.pt.entity.TariffGroup;
@@ -110,13 +110,13 @@ import org.tnt.pt.service.ptProcess.SpecificConsignmentSetService;
 import org.tnt.pt.service.ptProcess.SpecificCountryService;
 import org.tnt.pt.service.ptProcess.ZoneSummaryService;
 import org.tnt.pt.util.DoubleUtil;
+import org.tnt.pt.util.FileOperateUtil;
 import org.tnt.pt.util.FileUtil;
 import org.tnt.pt.util.PTPARAMETERS;
 import org.tnt.pt.vo.BusinessVO;
 import org.tnt.pt.vo.JsonData;
 import org.tnt.pt.vo.RevVO;
-
-import com.lowagie.text.Element;
+import org.tnt.pt.web.ptProcess.PTCreateController.ComparatorWeightBand;
 
 /**
  * PT审批流程controller
@@ -216,12 +216,25 @@ public class PTApproveController {
 	 * @return
 	 */
 	@RequestMapping(value="toBilling", method = RequestMethod.POST)
-	public String toBilling(Model model,@RequestParam(value = "id", required = false) Long busiId) {
+	public String toBilling(HttpServletRequest request,Model model,@ModelAttribute BusinessVO businessVO) {
 		try {
 			String state =  PTPARAMETERS.PROCESS_SATE[4];
 			Business business = new Business();
+			String fileName = businessVO.getFileName();
+			Long busiId = Long.valueOf(businessVO.getId());
 			business.setState(state);business.setId(busiId);
 			businessService.updateState(business);
+			String filePath = examService.getFilePath(busiId, getMD5(fileName));
+			User user = (User) request.getSession().getAttribute("user");
+			Exam exam = new Exam();
+			exam.setExamOppion(state);
+			exam.setBusinessId(busiId);
+			exam.setExamTime(new Date());
+			exam.setUserName(user.getRealName());//取当前用户id
+			exam.setFilePath(filePath);
+			exam.setFileName(fileName);
+			
+			examService.insertExam(exam);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -238,18 +251,23 @@ public class PTApproveController {
 		try {
 			User user = (User) request.getSession().getAttribute("user");
 			String state =  PTPARAMETERS.PROCESS_SATE[5];
+			Long busId = Long.parseLong(businessVO.getId());
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			Business business = businessService.getBusiness(Long.parseLong(businessVO.getId()));
+			Business business = businessService.getBusiness(busId);
 			business.setState(state);business.setEffectiveDate(sdf.parse(businessVO.getEffectiveDate()));
-			business.setId(Long.parseLong(businessVO.getId()));
+			business.setId(busId);
 			if(!"".equals(businessVO.getAccount())){
 				Customer cus = customerService.getCustomer(business.getCustomerId());
 				cus.setAccount(businessVO.getAccount());
+				CustomerLog cusLog = new CustomerLog();
+				cusLog.setBusId(busId);cusLog.setOldCustomer("777777777");cusLog.setNewCustomer(businessVO.getAccount());
+				cusLog.setUserName(user.getRealName());cusLog.setDescribeString(user.getRealName()+"将新客户77777777的账号修改为了"+businessVO.getAccount());
+				examService.insertCusLog(cusLog);
 				customerService.update(cus);
 			}
 			Exam exam = new Exam();
 			exam.setExamOppion(businessVO.getExamOppion());
-			exam.setBusinessId(Long.parseLong(businessVO.getId()));
+			exam.setBusinessId(busId);
 			exam.setExamTime(new Date());
 			exam.setUserName(user.getRealName());//取当前用户id
 			examService.insertExam(exam);
@@ -302,6 +320,10 @@ public class PTApproveController {
 		try {
 			Business business = businessService.getBusiness(Long.parseLong(businessVO.getId()));
 			Customer cus = customerService.getCustomer(business.getCustomerId());
+			String fileName = businessVO.getFileName();
+			String filePath = examService.getFilePath(Long.parseLong(businessVO.getId()), getMD5(fileName));
+			businessVO.setFileName(fileName);
+			businessVO.setFilePath(filePath);
 			model.addAttribute("customer", cus);
 			model.addAttribute("business", business);
 			model.addAttribute("businessVO", businessVO);
@@ -329,6 +351,8 @@ public class PTApproveController {
 			exam.setBusinessId(Long.parseLong(businessVO.getId()));
 			exam.setExamTime(new Date());
 			exam.setUserName(user.getRealName());//取当前用户id
+			exam.setFilePath(businessVO.getFilePath());
+			exam.setFileName(businessVO.getFileName());
 			examService.insertExam(exam);
 			businessService.updateState(business);
 		}catch(Exception e){
@@ -377,9 +401,9 @@ public class PTApproveController {
 		DecimalFormat df = new DecimalFormat("0.##");
 		try {
 //			String[] groupBy = businessVO.getMultichoised().split(",");
-			
+			String[] showGroupBy = businessVO.getMultichoised().split(",");
 			String[] groupBy = {"","Product", "PT Zone", "WeightBand","Country"};
-			for (String str : groupBy) {
+			for (String str : showGroupBy) {
 				if(!str.equals("")){
 					showList.add(str);
 				}
@@ -511,7 +535,7 @@ public class PTApproveController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="/exportBatchExcel", method = RequestMethod.POST)
+	@RequestMapping(value="/exportBatchExcel", method = RequestMethod.GET)
 	public String exportBatchExcel(Model model,@ModelAttribute BusinessVO businessVO,HttpServletResponse response) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		List<RevVO> sendReviewList = new ArrayList<RevVO>();
@@ -665,7 +689,7 @@ public class PTApproveController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="adjust", method = RequestMethod.POST)
+	@RequestMapping(value="adjust", method = RequestMethod.GET)
 	public String adjust(Model model,@ModelAttribute BusinessVO businessVO) {
 		
 		List<ZoneGroup> zoneGroupList = new ArrayList<ZoneGroup>();
@@ -673,6 +697,7 @@ public class PTApproveController {
 		List<WeightBand> ndocumentList = new ArrayList<WeightBand>();
 		List<WeightBand> eonomyList = new ArrayList<WeightBand>();
 		List<Discount> discountList = new ArrayList<Discount>();
+		List<HWRate> hwRateList = new ArrayList<HWRate>();
 		Map<String,Long> discountMap = new HashMap<String,Long>();//形成折扣map 方便查询
 		Business business = new Business();
 		ZoneType zoneType = new ZoneType();
@@ -692,12 +717,14 @@ public class PTApproveController {
 		model.addAttribute("business", business);
 		model.addAttribute("customer", customer);
 		model.addAttribute("zoneGroupList", zoneGroupList);
-		model.addAttribute("documentList", documentList);
-		model.addAttribute("ndocumentList", ndocumentList);
-		model.addAttribute("eonomyList", eonomyList);
+		model.addAttribute("documentList", getWeightBandList(documentList));
+		model.addAttribute("ndocumentList", getWeightBandList(ndocumentList));
+		model.addAttribute("eonomyList", getWeightBandList(eonomyList));
 		String payment =  PTPARAMETERS.PAYMENT[0];
+		hwRateList = hwRateService.getAllHWRateByBusId(business.getId(),null);
 		if(customer.getPayment().equals(PTPARAMETERS.PAYMENT[2])&&business.getIsFollow().equals("NO")){//如果选择的是both 并且 isfollow为no  此时需要展示两个tab页
 			discountList = discountService.getAllDiscountByBusId(business.getId(),PTPARAMETERS.PAYMENT[0]);
+			
 		}else if(customer.getPayment().equals(PTPARAMETERS.PAYMENT[2])&&business.getIsFollow().equals("YES")){//如果选择的是both 并且 isfollow为YES  此时需要展示两个同样的tab页
 			discountList = discountService.getAllDiscountByBusId(business.getId(),PTPARAMETERS.PAYMENT[2]);
 			payment = PTPARAMETERS.PAYMENT[2];
@@ -708,10 +735,16 @@ public class PTApproveController {
 		for (Discount discount:discountList) {
 			discountMap.put(discount.getWeightBandId()+"_"+discount.getZoneGroupId(), discount.getDiscount());
 		}
+		if(hwRateList.size()>2){
+			model.addAttribute("hwFlag", "hw");
+		}else{
+			model.addAttribute("hwFlag", " ");
+		}
 		model.addAttribute("discountMap", discountMap);
 		model.addAttribute("businessId", business.getId());
 		model.addAttribute("isFollow", business.getIsFollow());
 		model.addAttribute("payment", payment);
+		
 		return "ptProcess/adjust";
 	}
 	
@@ -732,7 +765,7 @@ public class PTApproveController {
 		Business business = new Business();
 		ZoneType zoneType = new ZoneType();
 		Customer customer = new Customer();
-		
+		List<HWRate> hwRateList = new ArrayList<HWRate>();
 		business = businessService.getBusiness(id);
 		customer = customerService.getCustomer(business.getCustomerId());
 		zoneType = zoneTypeService.getZoneTypeByZoneType(business.getZoneType());//zonetype类型
@@ -747,18 +780,137 @@ public class PTApproveController {
 		model.addAttribute("business", business);
 		model.addAttribute("customer", customer);
 		model.addAttribute("zoneGroupList", zoneGroupList);
-		model.addAttribute("documentList", documentList);
-		model.addAttribute("ndocumentList", ndocumentList);
-		model.addAttribute("eonomyList", eonomyList);
+		model.addAttribute("documentList", getWeightBandList(documentList));
+		model.addAttribute("ndocumentList", getWeightBandList(ndocumentList));
+		model.addAttribute("eonomyList", getWeightBandList(eonomyList));
 		discountList = discountService.getAllDiscountByBusId(business.getId(),PTPARAMETERS.PAYMENT[1]);
+		hwRateList = hwRateService.getAllHWRateByBusId(business.getId(),null);
 		for (Discount discount:discountList) {
 			discountMap.put(discount.getWeightBandId()+"_"+discount.getZoneGroupId(), discount.getDiscount());
+		}
+		if(hwRateList.size()>2){
+			model.addAttribute("hwFlag", "hw");
+		}else{
+			model.addAttribute("hwFlag", " ");
 		}
 		model.addAttribute("discountMap", discountMap);
 		model.addAttribute("businessId", business.getId());
 		model.addAttribute("payment", PTPARAMETERS.PAYMENT[1]);
 		return "ptProcess/adjustRec";
 	}
+	
+	/**
+	 * 根据weightbandGroup的值 只保留一个weightband
+	 * @param wbs
+	 * @return
+	 */
+	public List<WeightBand> getWeightBandList(List<WeightBand> wbs){
+		List<WeightBand> wbList = new ArrayList<WeightBand>();
+		Map<Long,WeightBand> wbMap = new HashMap<Long,WeightBand>();
+		for(WeightBand wb : wbs){
+			Long weightBandGroupId = wb.getWeightbandGroupId();
+			wbMap.put(weightBandGroupId, wb);
+		}
+		for (Iterator i = wbMap.values().iterator(); i.hasNext();) {
+			wbList.add((WeightBand)i.next());
+	    }
+		//根据weightbandgroupid值进行排序
+		ComparatorWeightBand comparator=new ComparatorWeightBand();
+		Collections.sort(wbList, comparator);
+		return wbList;
+	}
+	
+	class ComparatorWeightBand implements Comparator{
+		 public int compare(Object arg0, Object arg1) {
+			 WeightBand weightBand0=(WeightBand)arg0;
+			 WeightBand weightBand1=(WeightBand)arg1;
+		     //首先比较年龄，如果年龄相同，则比较名字
+		    int flag=weightBand0.getWeightbandGroupId().compareTo(weightBand1.getWeightbandGroupId());
+		    return flag;
+		 }
+	}
+	
+	/**
+	 * specificConsignmentSet  详细页
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="discountSet", method = RequestMethod.GET)
+	public String discountSet(Model model,HttpServletRequest request) {
+		return "ptProcess/discountSet";
+	}
+	
+	/**
+	 * 重货_城市_折扣  详细页
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="hwRateProfile/{id}/{flag}", method = RequestMethod.GET)
+	public String hwRateProfile(Model model,@PathVariable("id") Long id,@PathVariable("flag") String flag) {
+		Business business = new Business();
+		ZoneType zoneType = new ZoneType();
+		Customer customer = new Customer();
+		business = businessService.getBusiness(id);
+		customer = customerService.getCustomer(business.getCustomerId());
+		zoneType = zoneTypeService.getZoneTypeByZoneType(business.getZoneType());//zonetype类型
+		String payment = "";
+		if("NO".equals(business.getIsFollow())&&flag.equals("yes")){
+			payment = PTPARAMETERS.PAYMENT[0];
+		//如果是yes 并且 payment 为SenderPay 择进入ReceivePay页面
+		}else if("NO".equals(business.getIsFollow())&&flag.equals("no")){
+			payment = PTPARAMETERS.PAYMENT[1];
+		}else if("YES".equals(business.getIsFollow())){
+			payment = "Both";
+		}else{
+			payment = customer.getPayment();
+		}
+		
+		List<WeightBand> ndocumentList = new ArrayList<WeightBand>();
+		List<WeightBand> eonomyList = new ArrayList<WeightBand>();
+		String ndocumentIds = new String();
+		String eonomyIds = new String();
+		List<HWRate> hwRateList = new ArrayList<HWRate>();
+		Map<String,Double> hwRateMap = new HashMap<String,Double>();//形成折扣map 方便查询
+		List<Country> ndocountrys = new ArrayList<Country>();
+		List<Country> ecocountrys = new ArrayList<Country>();
+		
+		ndocumentList = weightBandService.getAllHighWeightBandByProductId(zoneType.getNonDocument());//获取重货
+		eonomyList = weightBandService.getAllHighWeightBandByProductId(zoneType.getEconomy());//获取重货
+		
+		ndocountrys = hwRateService.getCountry(business.getId(), zoneType.getNonDocument());
+		ecocountrys = hwRateService.getCountry(business.getId(), zoneType.getEconomy());
+		
+		for (WeightBand wb : ndocumentList) {
+			ndocumentIds +=wb.getId()+";";
+		}
+		
+		for (WeightBand wb : eonomyList) {
+			eonomyIds +=wb.getId()+";";
+		}
+		
+		hwRateList = hwRateService.getAllHWRateByBusId(business.getId(),payment);
+		for (HWRate hwRate:hwRateList) {
+			hwRateMap.put(hwRate.getBusinessId()+"_"+hwRate.getProductId()+"_"+hwRate.getWeightBandId()+"_"+hwRate.getCountryId(), hwRate.getRate());
+		}
+		
+		model.addAttribute("business", business);
+		model.addAttribute("customer", customer);
+		model.addAttribute("ndocumentList", ndocumentList);
+		model.addAttribute("eonomyList", eonomyList);
+		model.addAttribute("ndocumentIds", ndocumentIds);
+		model.addAttribute("eonomyIds", eonomyIds);
+		
+		model.addAttribute("eonomy", zoneType.getEconomy());
+		model.addAttribute("ndocument", zoneType.getNonDocument());
+		model.addAttribute("ndocumentCountrys", ndocountrys);
+		model.addAttribute("eonomyCountrys", ecocountrys);
+		model.addAttribute("hwRateMap", hwRateMap);
+		
+		model.addAttribute("isFollow", business.getIsFollow());
+		model.addAttribute("payment",payment);
+		return "ptProcess/hwRateProfile";
+	}
+	
 	
 	/**
 	 * 进入分析pt 调整利率之后页面
@@ -989,22 +1141,34 @@ public class PTApproveController {
                 jsonDataList.add(jsonData);  
             }  
 			for (JsonData jsonData:jsonDataList) {
-				Discount dd = new Discount();
 				String name = jsonData.getName();
-				String[] discountArr = name.split("_");
-				
-				dd.setWeightBandId(Long.valueOf(discountArr[1]));
-				dd.setZoneGroupId(Long.valueOf(discountArr[2]));
 				String value = jsonData.getValue();
-				dd.setDiscount(Long.valueOf((value==null||"".equals(value))?"0":value));
-				dd.setBusinessId(Long.valueOf(discountArr[3]));
-				dd.setPayment(payment);
-				discountList.add(dd);
+				if(value.contains(".")){
+					throw new Exception("value can not be decimal!");
+				}
+				String[] discountArr = name.split("_");
+				WeightBand wb = weightBandService.getWeightBand(Long.valueOf(discountArr[1]));
+				Long weightbandGroupId = wb.getWeightbandGroupId();
+				Long productId = wb.getProductId();
+				List<WeightBand> wbs = weightBandService.getAllWeightBandByProductIdAndGroupId(productId,weightbandGroupId);
+				
+				for(WeightBand wb_ : wbs){
+					Discount dd = new Discount();
+					dd.setWeightBandId(wb_.getId());
+					dd.setZoneGroupId(Long.valueOf(discountArr[2]));
+					dd.setDiscount(Long.valueOf((value==null||"".equals(value))?"0":value));
+					dd.setBusinessId(Long.valueOf(discountArr[3]));
+					dd.setPayment(payment);
+					discountList.add(dd);
+				}
+				
 			}
 			discountService.add(discountList);
 		} catch (ParseException e) {
-			msg = "parseException";
-		}
+			msg = e.getMessage();
+		}catch (Exception e) {
+			msg = e.getMessage();
+		} 
 		return msg;
 	}
 	
@@ -1862,115 +2026,86 @@ public class PTApproveController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="uploadFile/{id}", method = RequestMethod.POST)
-	public void uploadFile(HttpServletRequest request, HttpServletResponse response,
-				Model model,@PathVariable("id") Long  busiId) {
-		PrintWriter out = null;
-		try {
-		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html; charset=UTF-8");
-		out = response.getWriter();
-		//文件保存目录路径
-		String savePath = request.getSession().getServletContext().getRealPath("/attached/");
-		// 临时文件目录 
-		String tempPath = request.getSession().getServletContext().getRealPath("/attached/temp/");
-//		String oilFee = request.getSession().getServletContext().getRealPath("/static/images/oilFee.png");
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	@RequestMapping(value="saveFilePath", method = RequestMethod.POST)
+	public void saveFilePath(HttpServletRequest request,@ModelAttribute BusinessVO businessVO) {
+		String savePath = request.getSession().getServletContext().getContextPath();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		String ymd = sdf.format(new Date());
-		savePath += "/" + ymd + "/";
-		//创建文件夹
-		File dirFile = new File(savePath);
-		if (!dirFile.exists()) {
-			dirFile.mkdirs();
-		}
-		
-		tempPath += "/" + ymd + "/";
-		//创建临时文件夹
-		File dirTempFile = new File(tempPath);
-		if (!dirTempFile.exists()) {
-			dirTempFile.mkdirs();
-		}
-		DiskFileItemFactory  factory = new DiskFileItemFactory();
-		factory.setSizeThreshold(20 * 1024 * 1024); //设定使用内存超过5M时，将产生临时文件并存储于临时目录中。   
-		factory.setRepository(new File(tempPath)); //设定存储临时文件的目录。   
-		ServletFileUpload upload = new ServletFileUpload(factory);
-		upload.setHeaderEncoding("UTF-8");
+        savePath = savePath + "/attached/uploads/"+ ymd + "/"+businessVO.getFileName();
 		BusinessFile bFile = new BusinessFile();
-		List items = upload.parseRequest(request);
-		Iterator itr = items.iterator();
-		while (itr.hasNext()) {
-			FileItem item = (FileItem) itr.next();
-			String fileName = item.getName();
-			if (!item.isFormField()) {
-				String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-				String newFileName = getMD5(fileName) + "." + fileExt;
-				try{
-					File uploadedFile = new File(savePath, newFileName);
-                    OutputStream os = new FileOutputStream(uploadedFile);
-                    InputStream is = item.getInputStream();
-                    byte buf[] = new byte[1024];//可以修改 1024 以提高读取速度
-                    int length = 0;  
-                    while( (length = is.read(buf)) > 0 ){  
-                        os.write(buf, 0, length);  
-                    }  
-                    //关闭流  
-                    os.flush();
-                    os.close();  
-                    is.close();  
-                    System.out.println("上传成功！路径："+savePath+"/"+newFileName);
-                    bFile.setBusinessId(busiId);
-					bFile.setFileName(newFileName);
-					bFile.setFilePath(savePath+"/"+newFileName);
-					bFile.setUploadDate(new Date());
-					String filePathString = ""+examService.getFilePath(busiId, newFileName);
-					if(!filePathString.equals(bFile.getFilePath())){
-						examService.insertFile(bFile);
-					}
-                    out.print("1");
-				}catch(Exception e){
-					e.printStackTrace();
-				}
-			  }		
-			} 
-			
-		} catch (FileUploadException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+        bFile.setBusinessId(Long.valueOf(businessVO.getId()));
+		bFile.setFileName(businessVO.getFileName());
+		bFile.setFilePath(savePath);
+		bFile.setUploadDate(new Date());
+		String filePathString = ""+examService.getFilePath(Long.valueOf(businessVO.getId()), businessVO.getFileName());
+		if(!filePathString.equals(bFile.getFilePath())){
+			examService.insertFile(bFile);
 		}
-		out.flush();
-		out.close();
 	}
     
-	// 处理文件上传二   
-    @RequestMapping(value = "fileUpload/{id}", method = RequestMethod.POST)   
-    public String fileUpload(HttpServletRequest request,@PathVariable("id") Long  busiId)   
-            throws IllegalStateException, IOException {   
-        // 设置上下方文   
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(   
-                request.getSession().getServletContext());   
-  
-        // 检查form是否有enctype="multipart/form-data"   
-        if (multipartResolver.isMultipart(request)) {   
-            MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;   
-            Iterator<String> iter = multiRequest.getFileNames();   
-            while (iter.hasNext()) {   
-                // 由CommonsMultipartFile继承而来,拥有上面的方法.   
-                MultipartFile file = multiRequest.getFile(iter.next());   
-                if (file != null) {   
-                    String fileName = "demoUpload" + file.getOriginalFilename();   
-                    String path = "D:/" + fileName;   
-  
-                    File localFile = new File(path);   
-                    file.transferTo(localFile);   
-                }   
-            }   
-        }   
-        return "dataSuccess";   
-    }   
-  
+    /**
+	 * 文件上传
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="uploadFile/{id}", method = RequestMethod.POST)
+	public void uploadFile(HttpServletRequest request,PrintWriter out,
+				Model model,@PathVariable("id") Long  busiId) {
+		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();  
+		MultipartFile multipartFile =null;
+		for(Map.Entry<String,MultipartFile > set:fileMap.entrySet()){
+		String filekey = set.getKey();//Filedata
+		 multipartFile = set.getValue();//文件名
+		}
+		Map<String, String> retMap = this.storeIOc(multipartRequest, multipartFile);
+		BusinessFile bFile = new BusinessFile();
+        bFile.setBusinessId(busiId);
+		bFile.setFileName(retMap.get("fileName"));
+		bFile.setFilePath(retMap.get("filePath"));
+		bFile.setUploadDate(new Date());
+		String filePathString = ""+examService.getFilePath(busiId, retMap.get("fileName"));
+		if(!filePathString.equals(bFile.getFilePath())){
+			examService.insertFile(bFile);
+		}
+	}
+	
+	// 接受图片，返回图片地址
+	private Map<String, String> storeIOc(HttpServletRequest request, MultipartFile file) {
+		Map<String, String> retMap = new HashMap<String, String>();
+		String realPath = request.getSession().getServletContext().getRealPath("/attached/uploads/");
+		String savePath = request.getSession().getServletContext().getContextPath();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String ymd = sdf.format(new Date());
+		realPath = realPath  + "/" + ymd + "/";
+		File f1 = new File(realPath);
+	    System.out.println(realPath);
+	    if (!f1.exists()) {
+	        f1.mkdirs();
+	    }
+		String filePath = "";
+		if (file.isEmpty()) {
+			System.out.println("文件未上传");
+		} else {
+			String _fileName = file.getOriginalFilename();
+			// /**使用UUID生成文件名称**/
+//			_fileName = UUID.randomUUID().toString();
+			filePath = realPath + File.separator + _fileName;
+			File restore = new File(filePath);
+			retMap.put("fileName", _fileName);
+			savePath = savePath + "/attached/uploads/"+ ymd + "/"+_fileName;
+			retMap.put("filePath", savePath);
+			try {
+				file.transferTo(restore);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+	// 返回默认的图片地址
+	return retMap;
+	}
+
+	
     @RequestMapping(value = "deleteFile", method = RequestMethod.POST)   
     public String deleteFile(Model model,@RequestParam(value = "id", required = false) Long busiId,@RequestParam(value = "fileName", required = false) String fileName){
     	String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
@@ -1979,15 +2114,15 @@ public class PTApproveController {
     	//删除文件
     	FileUtil.delFile(filePathString);
     	examService.deleteFile(busiId, newFileName);
-        return "ptProcess/summaryInfoProgress";   
+        return "ptProcess/summaryInfoProgress";
     }   
 	
-	private String getMD5(String plainText ) { 
-		String returnStr = "";
+	private String getMD5(String plainText) { 
+		/*String returnStr = "";
 		try { 
 			MessageDigest md = MessageDigest.getInstance("MD5"); 
 			md.update(plainText.getBytes()); 
-			byte b[] = md.digest(); 
+			byte b[] = md.digest();
 			int i; 
 			StringBuffer buf = new StringBuffer(""); 
 			for (int offset = 0; offset < b.length; offset++) { 
@@ -2000,8 +2135,8 @@ public class PTApproveController {
 			returnStr = buf.toString();
 		} catch (NoSuchAlgorithmException e) { 
 			e.printStackTrace(); 
-		} 
-		return returnStr; 
+		} */
+		return plainText; 
 	} 
 	
 }

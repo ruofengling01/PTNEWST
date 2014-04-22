@@ -140,7 +140,8 @@ $(document).ready(function(){
 	}
     
     function stateLog(val){
-  	  window.showModalDialog('${ctx}/ptQuery/stateLog/'+val,'','dialogHeight:300px; dialogWidth: 400px;');
+      	//window.location.href="${ctx}/ptQuery/stateLog/"+val;
+  	  	window.showModalDialog('${ctx}/ptQuery/stateLog/'+val,'','dialogHeight:300px; dialogWidth: 650px;');
     }
     
     function appeal(val){

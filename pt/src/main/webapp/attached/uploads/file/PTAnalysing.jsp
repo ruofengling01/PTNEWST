@@ -13,8 +13,6 @@
 <link href="${ctx}/static/styles/main.css" type="text/css" rel="stylesheet" />
 <script src="${ctx}/static/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
 <script src="${ctx}/static/jquery-validation/1.10.0/jquery.validate.min.js" type="text/javascript"></script>
-<link rel="stylesheet" href="${ctx}/uploadify/uploadify.css" type="text/css"></link>
-<script type="text/javascript" src="${ctx}/uploadify/jquery.uploadify-3.1.min.js"></script>
 </head>
 
 <style type="text/css">
@@ -23,7 +21,7 @@
 </style>
 
 <body>
-<form action="${ctx}/ptApprove/ptAnalysing" method="post" id="analysing">
+<form action="upload.jsp" id="form1" name="form1" encType="multipart/form-data"  method="post" target="hidden_frame" >
 	<div style="padding:5px;">
   <h4 class="title">PT Commercial Analyse</h4>
   <table class="table_A">
@@ -157,7 +155,9 @@
 <div id="hide" style="OVERFLOW-Y:auto;PADDING-LEFT:0px;SCROLLBAR-FACE-COLOR:#ecf7ff;PADDING-BOTTOM:0px;SCROLLBAR-HIGHLIGHT-COLOR:#919192;
 		OVERFLOW:auto;WIDTH:100%;SCROLLBAR-SHADOW-COLOR:#919192;COLOR:blue;LINE-HEIGHT:100%;height:100px;display:none;">
 <iframe name="show_review_iframe" id="show_review_iframe" width="100%" height="300" frameborder="0" scrolling="auto" ></iframe>
-
+<div style="text-align:right">
+<span style="background-color:#EEEEEE;">Total (After Cost Adjustment)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;19.50%</span>
+</div>
 <br>
 </div>
 
@@ -180,11 +180,13 @@
 </div>
 <br />
 <div align="left">
-	<input type="file" name="Browser" id="file_upload" />
-	<a href="javascript:$('#file_upload').uploadify('upload','*')">upload</a>&nbsp;   
-        <a href="javascript:$('#file_upload').uploadify('cancel', '*')">uploadCancel</a> 
+	<input type="file" id="file" name="file" style="width:450">
+	<INPUT type="submit" value="上传文件"><span id="msg"></span>
+	<br>
+	<font color="red">支持JPG,JPEG,GIF,BMP,SWF,RMVB,RM,AVI文件的上传</font>              
 </div>
 <hr />
+<iframe name='hidden_frame' id="hidden_frame" style='display:none'></iframe>
 <br />
   <div style="text-align: center">
   <input type="button" value="Confirm" class="cls-button" id="Confirm" /> 
@@ -199,9 +201,16 @@
 </body>
 <script language="JavaScript">
 
+function callback(msg)
+{
+	document.getElementById("file").outerHTML = document.getElementById("file").outerHTML;
+	document.getElementById("msg").innerHTML = "<font color=red>"+msg+"</font>";
+}
+
 $(function() {
 
 	var businessId = document.getElementById("hiddenID").value;
+    
 	$("#Reject").click(function(){
         var examOppion = document.getElementById("examOppion").value;
         if(examOppion==""){
@@ -233,7 +242,7 @@ $(function() {
     
     $("#addLi").click(function(){
     	 var str="";
-	   	 $("input[name='addBox']:checked").each(function(){
+	   	 $("input[name='addBox']:checked").each(function(){ 
 	   	 str += $(this).val()+"," ;
 	   	 $(this).attr('checked',false );
 	   	 });
@@ -302,7 +311,7 @@ $(function() {
     	var examOppion = document.getElementById("examOppion").value;
     	var fileName = document.getElementById("fileName").innerText;
     	if(fileName==''){
-    		alert('Pls upload file first!');return;
+    		//alert('Pls upload file first!');return;
     	}
     	if(examOppion==""){
     		if(confirm("Are you sure confirm without oppinon?"))
@@ -311,24 +320,25 @@ $(function() {
     			document.getElementById("examOppion").focus();
     		}else{
     		}
-    		
     	}
-    	$("#analysing").attr('action',"${ctx}/ptApprove/confirmCus?id="+businessId+"&fileName="+fileName+"&examOppion="+examOppion);
-    	//window.location.href="${ctx}/ptApprove/confirmCus?id="+businessId+"&examOppion="+examOppion+"&fileName="+fileName;
-     	$("#analysing").submit();
-     	
+    	//$("#analysing").attr('action',"${ctx}/ptApprove/confirmCus?id="+businessId+"&examOppion="+examOppion+"&fileName="+fileName);
+    	window.location.href="${ctx}/ptApprove/confirmCus?id="+businessId+"&examOppion="+examOppion+"&fileName="+fileName;
+     	//$("#analysing").submit();
      });
  	
     $("#Adjust").click(function(){
     	window.location.href="${ctx}/ptApprove/adjust?id="+businessId;
+    	//$("#analysing").attr('action',"${ctx}/ptApprove/adjust?id="+businessId);
+     	//$("#analysing").submit();
+     	
      });
     
     $("#file_upload").uploadify({
     	'height'        : 27, 
-    	'width'         : 80,  //'${ctx}/serverlet/UploadFile?businessId='+businessId
+    	'width'         : 80,  //'${ctx}/ptApprove/uploadFile/'+businessId,
     	'buttonText'    : 'browse',
         'swf'           : '<%=path%>/uploadify/uploadify.swf',
-        'uploader'      : '${ctx}/ptApprove/uploadFile/'+businessId,
+        'uploader'      : '${ctx}/serverlet/UploadFile?businessId='+businessId,
         'auto'          : false,
         //'fileTypeExts'  : '*.xls',
         'formData'      : {'userName':'','qq':''},

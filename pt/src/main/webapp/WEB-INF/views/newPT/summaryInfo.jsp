@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+﻿<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="org.tnt.pt.util.PTPARAMETERS"%>
@@ -44,9 +44,9 @@ response.setDateHeader("Expires", -10);
     <%--***************隐藏域********** --%>
   <table class="modify">
     <tr>
-      <th>Application Date:</th>
-      <td><fmt:formatDate value="${business.applicationDate}" pattern="yyyy-MM-dd" /></td>
-      <th>Depot:</th>
+      <th width="20%">Application Date:</th>
+      <td width="40%"><fmt:formatDate value="${business.applicationDate}" pattern="yyyy-MM-dd" /></td>
+      <th width="20%">Depot:</th>
       <td>${business.depotCode}</td>
     </tr>
     <tr>
@@ -81,34 +81,28 @@ response.setDateHeader("Expires", -10);
   <table class="modify">
     <tr>
       <th width="45%">Is the customer on fuel surcharge exemption or deduction now?</th>
-      <td>${customer.isFuleDeduction }</td>
-      <th width="20%">the Current fuel surcharge</th>
+      <td width="15%">${customer.isFuleDeduction }</td>
+      <th width="20%">The Current fuel surcharge</th>
       <td>${customer.fuelSurcharge }</td>
     </tr>
-    <tr>
-      <th width="45%">Are you requesting for fuel surcharge exemption or deduction now?</th>
-      <td>${customer.isReq}</td>
-      <th width="20%">the fuel surcharge requested</th>
-      <td>${customer.reqFuelSurcharge}</td>
-    </tr>
-    </tr>
+    
     
   </table>
   <table class="modify">
     <tr>
-      <th>Term of Payment:</th>
-      <td colspan="3" style="background-color:yellow">
-      <span><B>${payment}</B></span>
+      <th width="45%">Term of Payment:</th>
+      <td colspan="3" >
+      <span style="background-color:yellow"><B>${payment}</B></span>
       </td>
     </tr>
     <tr>
-      <th>Is customer a mainly document sender?</th>
-      <td>${business.isDocumentSender}</td>
-      <th width="15%">Cons/Stop</th>
+      <th width="45%">Is customer a mainly document sender?</th>
+      <td width="15%">${business.isDocumentSender}</td>
+      <th width="20%">Cons/Stop</th>
       <td>${business.consStop}</td>
     </tr>
      <tr>
-      <th width="30%">Prdouct Description(eg:digital cameral)</th>
+      <th >Prdouct Description(eg:digital cameral)</th>
       <td colspan="3">${business.description}</td>
       
     </tr>
@@ -154,13 +148,13 @@ response.setDateHeader("Expires", -10);
         <tbody>
             <c:forEach items="${geoSummaryList}" var="geoSummary">
 				<tr>
-					<td>${geoSummary.geoZone}</td>
-					<td>${geoSummary.revM}</td>
-					<td>${geoSummary.revY}</td>
-					<td>${geoSummary.consM}</td>
-					<td>${geoSummary.consY}</td>
-					<td>${geoSummary.kiloM}</td>
-					<td>${geoSummary.kiloY}</td>
+					<td width="16%">${geoSummary.geoZone}</td>
+					<td width="14%">${geoSummary.revM}</td>
+					<td width="14%">${geoSummary.revY}</td>
+					<td width="14%">${geoSummary.consM}</td>
+					<td width="14%">${geoSummary.consY}</td>
+					<td width="14%">${geoSummary.kiloM}</td>
+					<td width="14%">${geoSummary.kiloY}</td>
 			   </tr>
 		 </c:forEach>
           </tbody>
@@ -189,13 +183,13 @@ response.setDateHeader("Expires", -10);
         <tbody>
         <c:forEach items="${zoneSummaryList}" var="zoneSummary">
 				<tr>
-					<td>${zoneSummary.zoneType}</td>
-					<td>${zoneSummary.revM}</td>
-					<td>${zoneSummary.revY}</td>
-					<td>${zoneSummary.consM}</td>
-					<td>${zoneSummary.consY}</td>
-					<td>${zoneSummary.kiloM}</td>
-					<td>${zoneSummary.kiloY}</td>
+					<td  width="16%">${zoneSummary.zoneType}</td>
+					<td  width="14%">${zoneSummary.revM}</td>
+					<td width="14%">${zoneSummary.revY}</td>
+					<td width="14%">${zoneSummary.consM}</td>
+					<td width="14%">${zoneSummary.consY}</td>
+					<td width="14%">${zoneSummary.kiloM}</td>
+					<td width="14%">${zoneSummary.kiloY}</td>
 			   </tr>
 		 </c:forEach>
           </tbody>
@@ -204,12 +198,11 @@ response.setDateHeader("Expires", -10);
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
-                <th colspan="15" style="text-align:left;">Discounts Requested</th>
+                <th colspan="15" style="text-align:left;">Discounts Profile- 15D/12D/10D/09D(% off full tariff)</th>
             </tr>
             <tr>
                 <th>PRODUCT</th>
-				<%--<th width="8%"> Chargeable Weight(kg)</th>
-                --%><c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
+				<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 						<th>${zoneGroup.zone}</th>
 				</c:forEach>
             </tr>
@@ -381,7 +374,7 @@ response.setDateHeader("Expires", -10);
 				 $("#summaryInfo").attr('action',"${ctx}/ptModify/summaryInfo");
 				 $("#summaryInfo").submit();
               }else{
-            	  $("#summaryInfo").attr('action',"${ctx}/ptModify/consProfile");
+            	  $("#summaryInfo").attr('action',"${ctx}/ptModify/consProfile/${isHighWight}");
      			 $("#summaryInfo").submit();
               }
 			 
@@ -407,6 +400,7 @@ response.setDateHeader("Expires", -10);
   	                data:{businessId:'${business.id}'},
   	                success:function(data){
   	                	alert(data);
+						
   	                },
   	                error:function(e) {
   	                    alert("error："+e);
@@ -427,6 +421,7 @@ response.setDateHeader("Expires", -10);
   	                data:{businessId:'${business.id}'},
   	                success:function(data){
   	                	alert(data);
+  	                	window.parent.location.reload();
   	                },
   	                error:function(e) {
   	                    alert("error："+e);

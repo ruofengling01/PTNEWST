@@ -2,8 +2,8 @@ package org.tnt.pt.util;
 
 public class PTPARAMETERS {
 
-	public static String PROCESS_SATE[] = {"Created","Waiting for RSM's approval","Being processed by Com","Waiting for Sales' confirmation",
-											"Being processed by Billing","Rates loading finished","Waiting for Admin's approval","Rejected","Expired","In Creating"};
+	public static String PROCESS_SATE[] = {"Created","Waiting for RSMs approval","Being processed by Com","Waiting for Sales confirmation",
+											"Being processed by Billing","Rates loading finished","Waiting for Admins approval","Rejected","Expired","In Creating"};
 
 	public static String PROCESS_SATE_FAIL[] = {"Rejected","Rejected","Rejected","Rejected","Rejected"};
 	

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.tnt.pt.entity.Business;
 import org.tnt.pt.entity.Consignment;
 import org.tnt.pt.entity.Country;
+import org.tnt.pt.entity.CountryZone;
 import org.tnt.pt.entity.Customer;
 import org.tnt.pt.entity.Discount;
 import org.tnt.pt.entity.DiscountDefault;
@@ -48,6 +49,7 @@ import org.tnt.pt.service.ptProcess.RevService;
 import org.tnt.pt.service.ptProcess.SpecificConsignmentSetService;
 import org.tnt.pt.service.ptProcess.SpecificCountryService;
 import org.tnt.pt.service.ptProcess.ZoneSummaryService;
+import org.tnt.pt.util.DoubleUtil;
 import org.tnt.pt.util.PTPARAMETERS;
 import org.tnt.pt.vo.BusCusVO;
 import org.tnt.pt.vo.RevVO;
@@ -356,8 +358,8 @@ public class PTModifyController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value="consProfile", method = RequestMethod.POST)
-	public String consProfile(Model model,@ModelAttribute BusCusVO busCus) {
+	@RequestMapping(value="consProfile/{isHighWight}", method = RequestMethod.POST)
+	public String consProfile(Model model,@ModelAttribute BusCusVO busCus,@PathVariable("isHighWight") String isHighWight) {
 		Business business = new Business();
 		ZoneType zoneType = new ZoneType();
 		Customer customer = new Customer();
@@ -387,6 +389,8 @@ public class PTModifyController {
 		List<Consignment>  consignmentList = new ArrayList<Consignment>();//con数量集合 批量插入
 		Map<String,Integer> consignmentMap = new HashMap<String,Integer>();//形成折扣map 方便查询
 		
+		List<HWRate> hwRateList = new ArrayList<HWRate>();
+		Map<String,String> ishwRateMap = new HashMap<String,String>();//形成该zone是否存在hwratemap 方便查询
 
 		
 		
@@ -399,8 +403,14 @@ public class PTModifyController {
 		consignmentList = consignmentService.getAllConsignmentByBusId(business.getId(),payment);
 		for (Consignment consignment:consignmentList) {
 			consignmentMap.put(consignment.getWeightBandId()+"_"+consignment.getZoneGroupId(), consignment.getConsignment());
+			
 		}
 		
+		hwRateList = hwRateService.getAllHWRateByBusId(business.getId(), payment);
+		for (HWRate hwRate:hwRateList) {
+			CountryZone cz = countryZoneService.getCountryZone(hwRate.getCountryId());
+			ishwRateMap.put(hwRate.getProductId()+"_"+cz.getZoneGroupId(), "yes");
+		}
 		
 		model.addAttribute("business", business);
 		model.addAttribute("customer", customer);
@@ -413,6 +423,9 @@ public class PTModifyController {
 		
 		model.addAttribute("isFollow", busCus.getIsFollow());
 		model.addAttribute("payment",payment);
+		model.addAttribute("isHighWight",isHighWight);
+		model.addAttribute("ishwRateMap",ishwRateMap);
+		
 		return "newPT/consignmentProfile";
 	}
 	
@@ -474,6 +487,55 @@ public class PTModifyController {
 			zs.setZoneType(rev.getZone());
 			zoneSummaryList.add(zs);
 		}
+		
+		/**
+		 * 获取汇总信息
+		 */
+		String[] groupBy_1 = {};
+		RevVO revVO = revService.getGroupBy_(business.getId(),groupBy_1,payment).get(0);
+		ZoneSummary zoneSummary = new ZoneSummary();
+		zoneSummary.setConsM(revVO.getCons());
+		zoneSummary.setConsY(DoubleUtil.get2Double(revVO.getCons()*12));
+		zoneSummary.setKiloM(revVO.getKilo());
+		zoneSummary.setKiloY(DoubleUtil.get2Double(revVO.getKilo()*12));
+		zoneSummary.setRevM(revVO.getRev());
+		zoneSummary.setRevY(DoubleUtil.get2Double(revVO.getRev()*12));
+		
+		
+		/**
+		 * highweight
+		 */
+		Map<String,Double> hwRateMap = new HashMap<String,Double>();//形成折扣map 方便查询
+		List<Country> ndocountrys = new ArrayList<Country>();
+		List<Country> ecocountrys = new ArrayList<Country>();
+		List<WeightBand> ndocumentList_ = new ArrayList<WeightBand>();
+		List<WeightBand> eonomyList_ = new ArrayList<WeightBand>();
+		List<HWRate> hwRateList = new ArrayList<HWRate>();
+		ndocumentList_ = weightBandService.getAllHighWeightBandByProductId(zoneType.getNonDocument());//获取重货
+		eonomyList_ = weightBandService.getAllHighWeightBandByProductId(zoneType.getEconomy());//获取重货
+		
+		ndocountrys = hwRateService.getCountry(business.getId(), zoneType.getNonDocument());
+		ecocountrys = hwRateService.getCountry(business.getId(), zoneType.getEconomy());
+
+		hwRateList = hwRateService.getAllHWRateByBusId(business.getId(),payment);
+		for (HWRate hwRate:hwRateList) {
+			hwRateMap.put(hwRate.getBusinessId()+"_"+hwRate.getProductId()+"_"+hwRate.getWeightBandId()+"_"+hwRate.getCountryId(), hwRate.getRate());
+		}
+		if(hwRateList.size()>0){
+			model.addAttribute("isHighWight", "hw");
+		}else{
+			model.addAttribute("isHighWight", "noHw");
+		}
+		model.addAttribute("ndocumentCountrys", ndocountrys);
+		model.addAttribute("eonomyCountrys", ecocountrys);
+		model.addAttribute("hwRateMap", hwRateMap);
+		model.addAttribute("ndocumentList_", ndocumentList_);
+		model.addAttribute("eonomyList_", eonomyList_);
+		model.addAttribute("eonomy", zoneType.getEconomy());
+		model.addAttribute("ndocument", zoneType.getNonDocument());
+		/**
+		 * highweight
+		 */
 		
 		model.addAttribute("business", business);
 		model.addAttribute("customer", customer);

@@ -24,4 +24,9 @@ public interface RateDao extends BaseDao<Rate>{
 	void save(Rate rate);
 	
 	List<Rate> findAllByBusId(Map<String,Object> parameter);
+	
+	void deleteRateList(Rate rate);
+	
+	void batchInsert(List<Rate> rateList);
+	
 }

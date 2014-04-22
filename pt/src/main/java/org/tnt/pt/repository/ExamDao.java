@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.tnt.pt.entity.Business;
 import org.tnt.pt.entity.BusinessFile;
+import org.tnt.pt.entity.CustomerLog;
 import org.tnt.pt.entity.Exam;
 import org.tnt.pt.entity.Tariff;
 import org.tnt.pt.vo.BusinessVO;
@@ -24,6 +25,9 @@ import org.tnt.pt.vo.HWRateVO;
 public interface ExamDao extends BaseDao<Exam>{
 
 	public Integer insertFile(BusinessFile bFile);
+	
+	
+	public Integer insertCusLog(CustomerLog cusLog) ;
 	
 	public void deleteFile(Map map);
 	

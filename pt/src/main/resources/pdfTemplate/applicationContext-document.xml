@@ -15,10 +15,7 @@
 	<bean id="document2Service" class="org.tnt.pt.service.downPDF.Document2Service">
 		<property name="freemarkerConfiguration" ref="freemarkerConfiguration" />
 	</bean>
-	<!-- freemarker服务类 -->
-	<bean id="document3Service" class="org.tnt.pt.service.downPDF.Document3Service">
-		<property name="freemarkerConfiguration" ref="freemarkerConfiguration" />
-	</bean>
+	
 	
 	<!-- 用于生成HTML邮件内容的Freemarker配置 -->
 	<bean id="freemarkerConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">

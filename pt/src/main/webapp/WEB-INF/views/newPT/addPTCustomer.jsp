@@ -36,7 +36,7 @@
   <h4 class="title">New PT-Customer Description</h4>
   <table class="modify">
     <tr>
-      <th width="20%">Application Date:</th>
+      <th width="23.5%">Application Date:</th>
       <td width="40%"><span id="appDate"></span></td>
       <th width="20%">Depot:</th>
       <td>${user.code}<input id="depotCode" type="hidden" name="business.depotCode" value="${user.code}"/></td>
@@ -63,7 +63,11 @@
       <th>Channel:</th>
       <td>
       	  <select name="customer.channel" id="channel">
-          		<option value="TSM">TSM</option>
+          		<option value="GAM">GAM</option>
+				<option value="MAM">MAM</option>
+				<option value="TSM">TSM</option>
+				<option value="AGENT">AGENT</option>
+				<option value="EMS">EMS</option>
           </select>
       </td>
     </tr>
@@ -71,8 +75,16 @@
       <th>Industry</th>
       <td colspan="1">
       	<select name="customer.industry">
-          	<option value="ServiceIndustry(Advertising,Media,Agency,Laws)">ServiceIndustry(Advertising,Media,Agency,Laws)</option>
-        </select>
+          	<option value="Logistics/Transportations/Freight Forwarders">Logistics/Transportations/Freight Forwarders</option>
+			<option value="Computers/Internet/Telecommunications/Electronic Technology">Computers/Internet/Telecommunications/Electronic Technology</option>
+			<option value="Biotechnology/Pharmacy/Medical Equipment">Biotechnology/Pharmacy/Medical Equipment</option>
+			<option value="FMCG(Foods, Beverages, Cosmetics, etc.)">FMCG(Foods, Beverages, Cosmetics, etc.)</option>
+			<option value="DCG(Furnitures, Household appliances, Garments, Textiles)">DCG(Furnitures, Household appliances, Garments, Textiles)</option>
+			<option value="Auto and Accessories/Manufacturing(Engine/Mechanics)/Chemical">Auto and Accessories/Manufacturing(Engine/Mechanics)/Chemical</option>
+			<option value="Trade/Imp&amp;Exp/Wholesales/Retails">Trade/Imp&amp;Exp/Wholesales/Retails</option>
+			<option value="Service Industry(Advertising, Media, Agency, Laws, Consultation, etc.)">Service Industry(Advertising, Media, Agency, Laws, Consultation, etc.)</option>
+			<option value="Others">Others</option>
+		</select>
       </td>
     </tr>
     <tr>
@@ -119,7 +131,7 @@
           <option value="NO">No</option>
           <option value="YES">YES</option>
         </select></td>
-      <th>Cons/Stop</th>
+      <th width="20%">Cons/Stop</th>
       <td><input type="text"  name="business.consStop" class="required number"></td>
     </tr>
      <tr>
@@ -146,9 +158,9 @@
   <hr />
   <br>
   <div style="text-align: center">
-  <input type="button" value="Submit" class="cls-button" onclick="tothenext(this)" /> 
+  <input type="button" value="Submit" class="cls-button" onclick="tothenext(this)" id="sub"/> 
    	&nbsp;&nbsp;&nbsp;<input type="button" value="Copy" class="cls-button"  id="copy"  />
-   	 &nbsp;&nbsp;&nbsp;<input type="button" value="Close" class="cls-button" onclick="window.location.href='index.html';"/>
+   	 <!--&nbsp;&nbsp;&nbsp;<input type="button" value="Close" class="cls-button" onclick="window.location.href='${ctx}/ptQuery/ptModifyInit';"/>-->
    	<input type="hidden" id="isFollow" name="isFollow">
    </div>
 </form>
@@ -179,8 +191,7 @@ function tothenext(obj){
 }
 $(function(){
     $("#copy").click(function(){
-    	//window.location.href="http://localhost:8090/pt/login/loginin";
-    	var cusstr = window.showModalDialog("${ctx}/ptQuery/copy","","dialogWidth=800px;dialogHeight=450px");
+    	var cusstr = window.showModalDialog("${ctx}/ptQuery/copy","","dialogWidth=920px;dialogHeight=380px");
     	if(cusstr ==null || cusstr ==undefined){
 	    	alert("pls check one customer on the dialog");
 	    	return;
@@ -198,6 +209,7 @@ $(function(){
     $("#account").focusout(function(){
     	var accountNo = $("#account").val();
     	var depotCode = $("#depotCode").val();
+    	var flag = false;//该depot下是否有客户
     	if(accountNo.length < 9){
     		while(accountNo.length < 9){
     			accountNo = "0"+accountNo;
@@ -209,12 +221,25 @@ $(function(){
             url:"${ctx}/tntCustomer/getCustomer/"+accountNo+"/"+depotCode,
             dataType:"json",      
             contentType:"application/json",   
+            async:false,
             success:function(data){
-            	//alert(data);
-            	//$("#account").val(data.accountNo);
-            	$("#cusName").val(data.name);
-            	$("#territory").val(data.territory);//channel
-            	$("#channel").val(data.channel);
+            	if(data!=null){
+	            	if(data.branch == depotCode){
+	            		$("#cusName").val(data.name);
+	                	$("#territory").val(data.territory);//channel
+	                	$("#channel").val(data.channel);
+	                	$("#sub").attr("disabled",false);
+	            	}else{
+	            		alert("sorry,the depot has't this customer,so u can't submit this pt!");
+	            		$("#sub").attr("disabled",true);
+	            		flag = true;
+	            	}
+            	}else if(accountNo!="777777777"){
+            		alert("sorry,'777777777' refer to new customer");
+            		$("#sub").attr("disabled",true);
+            	}else{
+            		$("#sub").attr("disabled",false);
+            	}
             },
             error:function(e) {
                 alert("error："+e);
@@ -225,11 +250,14 @@ $(function(){
             type:"GET",
             url:"${ctx}/tntCustomer/getFsi/"+accountNo+"/"+depotCode,
             dataType:"json",      
-            contentType:"application/json",   
+            contentType:"application/json", 
+            async:false,
             success:function(data){
             	//$("#account").val(data.accountNo);
-            	$("#fsi").html(toPercent(data));
-            	$("#fsi_hidden").val(data);
+            	if(!flag){
+            		$("#fsi").html(toPercent(data));
+                	$("#fsi_hidden").val(data);
+            	}
             },
             error:function(e) {
                 alert("error："+e);

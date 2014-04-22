@@ -128,7 +128,7 @@
 		document.forms[0].submit();
 	}*/
 	function stateLog(val){
-  	  window.showModalDialog('${ctx}/ptQuery/stateLog/'+val,'','dialogHeight:300px; dialogWidth: 400px;');
+  	  window.showModalDialog('${ctx}/ptQuery/stateLog/'+val,'','dialogHeight:300px; dialogWidth: 650px;');
     }
 	function deletePT(val){
 		document.forms[0].action="${ctx}/ptQuery/deletePT?id="+val;

@@ -25,8 +25,24 @@
 -->
 </style>
 <script language="JavaScript">
-	//var date = new Date();
-	//document.getElementById('appDate').value=date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();	
+	function setCustomerDis(zonegroupId,tableId){
+		var returnValue = window.showModalDialog("${ctx}/ptApprove/discountSet","","dialogWidth:240px; dialogHeight:150px;");
+		if(returnValue==''){
+			return;
+		}else{
+			if(tableId=='tableb'){//15N
+				for(var i=1;i<11;i++){
+					var wdId = 'zg_'+i+'_'+zonegroupId+'_${business.id}';
+					$("#"+wdId).val(returnValue);
+				}
+			}else if(tableId=='tablec'){//48N
+				for(var i=12;i<23;i++){
+					var wdId = 'zg_'+i+'_'+zonegroupId+'_${business.id}';
+					$("#"+wdId).val(returnValue);
+				}
+			}
+		}
+	}
 </script>
 <body>
 <form action="#" id="adjustForm">
@@ -35,14 +51,14 @@
  <br />
 <div style="padding:0 5px 5px 5px;">
 <div class="clearboth"> </div>
-<table class="table_B" width="100%">
+<h4>Terms  of  Payments:ReceivePay</h4>
+<table class="table_B" width="100%" id="talbea">
         <thead>
 			<tr align="center">
-                <th colspan="15" style="text-align:left;">Discounts Requested</th>
+                <th colspan="15" style="text-align:left;">Discounts Requested-15D/12D/10D/09D</th>
             </tr>
             <tr>
-                <th>PRODUCT</th>
-				<th width="8%"> Chargeable Weight(kg)</th>
+                <th>WeightBand</th>
                 <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 						<th>${zoneGroup.zone}</th>
 				</c:forEach>
@@ -51,8 +67,7 @@
         <tbody>
             <c:forEach items="${documentList}" var="weightBand">
 				<tr>
-					<td>${weightBand.name}</td>
-					<td>${weightBand.chargeableWeight}</td>
+					<td>${weightBand.weightbandGroup}</td>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 						<c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
 						<td><input id="zg_${key}_${business.id}" name="zg_${key}_${business.id}" type="text" value="${discountMap[key]}" size="3"/></td>
@@ -62,7 +77,7 @@
         </tbody>
     </table>
 	<br />
-<table class="table_B" width="100%">
+<table class="table_B" width="100%" id="tableb">
         <thead>
 			<tr align="center">
                 <th colspan="15" style="text-align:left;">Discounts Profile-15N/12N/10N/09N</th>
@@ -71,7 +86,7 @@
                 <th>Weightband</th>
 				<th  width="8%"> Chargeable Weight(kg)</th>
                  <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>${zoneGroup.zone}</th>
+						<th ondblclick="setCustomerDis(${zoneGroup.id},'tableb');">${zoneGroup.zone}</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -89,7 +104,7 @@
           </tbody>
 </table>
 <br />
-<table class="table_B" width="100%">
+<table class="table_B" width="100%" id="tablec">
         <thead>
 			<tr align="center">
                 <th colspan="15" style="text-align:left;">Discounts Profile-48N</th>
@@ -98,7 +113,7 @@
                 <th>Weightband</th>
 				<th  width="8%"> Chargeable Weight(kg)</th>
                 <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>${zoneGroup.zone}</th>
+						<th ondblclick="setCustomerDis(${zoneGroup.id},'tablec');">${zoneGroup.zone}</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -115,6 +130,7 @@
 			  </c:forEach>
           </tbody>
 </table>
+   <input type="hidden" id="hwFlag" value="${hwFlag}" name="hwFlag">
    <input type="hidden" id="payment" value="${payment}" name="payment">
    <input type="hidden" id="businessId" value="${businessId}" name="businessId">
 <br />
@@ -126,7 +142,6 @@
 </form>
 </div>
 <script type="text/javascript">
-
     $(function(){
         $("#next").click(function(){
         	//序列化表单元素，返回json数据
@@ -140,7 +155,11 @@
                 contentType:"application/json",   
                 data:jsonString,
                 success:function(data){
-                	window.location.href="${ctx}/ptApprove/ptAnalysingAdjust/"+businessId+"/${payment}";
+                	if($('#hwFlag').val()=='hw'){
+                		window.location.href="${ctx}/ptApprove/hwRateProfile/"+businessId+"/yes";
+            		}else{
+            			window.location.href="${ctx}/ptApprove/ptAnalysingAdjust/"+businessId;
+            		}
                 },
                 error:function(e) {
                     alert("error："+e);

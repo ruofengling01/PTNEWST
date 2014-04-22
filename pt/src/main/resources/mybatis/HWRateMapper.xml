@@ -48,7 +48,7 @@
 			<if test="businessId != null">
 				and businessId=#{businessId}
 			</if>
-			<if test="payment != null">
+			<if test="payment != null and payment!='' " >
 				and payment=#{payment}
 			</if>
 		</where>

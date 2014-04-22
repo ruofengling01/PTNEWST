@@ -41,6 +41,11 @@ public class RateService {
 		rateDao.save(rate);
 	}
 	
+	public void insert(List<Rate> rateList){
+		rateDao.deleteRateList(rateList.get(0));
+		rateDao.batchInsert(rateList);
+	}
+	
 	public void delete(Long businessId){
 		rateDao.delete(businessId);
 	}

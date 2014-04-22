@@ -15,7 +15,9 @@
 		.tab tr td {font-size:12px;
 					align:left;
 			}	
+	
 		</style>
+
 <body>
 <form action="#">
 <div style="padding:5px;">
@@ -56,7 +58,7 @@
     </tr>
     <tr>
       <td>Approval Date :</td>
-      <td>30-Oct-08</td>
+      <td></td>
       <td>Effective Date :</td>
       <td>${business.effectiveDate}</td>
     </tr>
@@ -121,17 +123,9 @@
                 <th colspan="25" style="text-align:left;">Discounts Profile-15D/12D/10D/09D</th>
             </tr>
             <tr>
-                <th rowspan="2">Weightband</th>
-                <th rowspan="2">Inc</th>
-                <th rowspan="2">Add On</th>
+                <th>Weightband</th>
                <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th colspan="2">${zoneGroup.zone}</th>
-				</c:forEach>
-            </tr>
-            <tr>
-               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>Base</th>
-						<th>Int</th>
+						<th>${zoneGroup.zone}</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -139,22 +133,9 @@
             <c:forEach items="${documentList}" var="weightBand">
 				<tr>
 					<td>${weightBand.name}</td>
-					<td>${weightBand.addOnWeightInt}kg</td>
-					<c:if test="${weightBand.type=='base'}">
-						<td align="center">N</td>
-					</c:if>
-					<c:if test="${weightBand.type=='add'}">
-						<td align="center">Y</td>
-					</c:if>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 					    <c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<c:if test="${weightBand.type=='base'}">
 							<td>${discountMap[key]}%</td>
-						</c:if>
-						<c:if test="${weightBand.type=='add'}">
-							<td></td>
-						</c:if>
-						<td>${discountMap[key]}%</td>	
 				   </c:forEach>
 			   </tr>
 			</c:forEach>
@@ -167,17 +148,9 @@
                 <th colspan="25" style="text-align:left;">Discounts Profile-15N/12N/10N/09N</th>
             </tr>
             <tr>
-                <th rowspan="2">Weightband</th>
-                <th rowspan="2">Inc</th>
-                <th rowspan="2">Add On</th>
+                <th>Weightband</th>
                <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th colspan="2">${zoneGroup.zone}</th>
-				</c:forEach>
-            </tr>
-            <tr>
-               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>Base</th>
-						<th>Int</th>
+						<th>${zoneGroup.zone}</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -185,22 +158,9 @@
             <c:forEach items="${ndocumentList}" var="weightBand">
 				<tr>
 					<td>${weightBand.name}</td>
-					<td>${weightBand.addOnWeightInt}kg</td>
-					<c:if test="${weightBand.type=='base'}">
-						<td align="center">N</td>
-					</c:if>
-					<c:if test="${weightBand.type=='add'}">
-						<td align="center">Y</td>
-					</c:if>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 					    <c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<c:if test="${weightBand.type=='base'}">
-							<td>${discountMap[key]}%</td>
-						</c:if>
-						<c:if test="${weightBand.type=='add'}">
-							<td></td>
-						</c:if>
-						<td>${discountMap[key]}%</td>	
+						<td>${discountMap[key]}%</td>
 				   </c:forEach>
 			   </tr>
 			</c:forEach>
@@ -213,17 +173,9 @@
                 <th colspan="25" style="text-align:left;">Discounts Profile-48N</th>
             </tr>
             <tr>
-                <th rowspan="2">Weightband</th>
-                <th rowspan="2">Inc</th>
-                <th rowspan="2">Add On</th>
+                <th>Weightband</th>
                <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th colspan="2">${zoneGroup.zone}</th>
-				</c:forEach>
-            </tr>
-            <tr>
-               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>Base</th>
-						<th>Int</th>
+						<th>${zoneGroup.zone}</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -231,22 +183,9 @@
            <c:forEach items="${economyList}" var="weightBand">
 				<tr>
 					<td>${weightBand.name}</td>
-					<td>${weightBand.addOnWeightInt}kg</td>
-					<c:if test="${weightBand.type=='base'}">
-						<td align="center">N</td>
-					</c:if>
-					<c:if test="${weightBand.type=='add'}">
-						<td align="center">Y</td>
-					</c:if>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 					    <c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<c:if test="${weightBand.type=='base'}">
-							<td>${discountMap[key]}%</td>
-						</c:if>
-						<c:if test="${weightBand.type=='add'}">
-							<td></td>
-						</c:if>
-						<td>${discountMap[key]}%</td>	
+						<td>${discountMap[key]}%</td>
 				   </c:forEach>
 			   </tr>
 			</c:forEach>
@@ -257,7 +196,7 @@
 <div class="tabPageUnSelected" id="conDIV">
 <table class="table_B" width="100%">
         <thead>
-						<tr align="center">
+			<tr align="center">
                 <th colspan="14" style="text-align:left;">Consignmengt Profile- 15D/12D/10D/09D</th>
             </tr>
             <tr>
@@ -408,17 +347,9 @@
                 <th colspan="25" style="text-align:left;">Discounts Profile-15D/12D/10D/09D</th>
             </tr>
             <tr>
-                <th rowspan="2">Weightband</th>
-                <th rowspan="2">Inc</th>
-                <th rowspan="2">Add On</th>
+                <th>Weightband</th>
                <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th colspan="2">${zoneGroup.zone}</th>
-				</c:forEach>
-            </tr>
-            <tr>
-               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>Base</th>
-						<th>Int</th>
+						<th >${zoneGroup.zone}</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -426,22 +357,9 @@
             <c:forEach items="${documentList}" var="weightBand">
 				<tr>
 					<td>${weightBand.name}</td>
-					<td>${weightBand.addOnWeightInt}kg</td>
-					<c:if test="${weightBand.type=='base'}">
-						<td align="center">N</td>
-					</c:if>
-					<c:if test="${weightBand.type=='add'}">
-						<td align="center">Y</td>
-					</c:if>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 					    <c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<c:if test="${weightBand.type=='base'}">
-							<td>${recDiscountMap[key]}%</td>
-						</c:if>
-						<c:if test="${weightBand.type=='add'}">
-							<td></td>
-						</c:if>
-						<td>${recDiscountMap[key]}%</td>	
+						<td>${recDiscountMap[key]}%</td>
 				   </c:forEach>
 			   </tr>
 			</c:forEach>
@@ -454,17 +372,9 @@
                 <th colspan="25" style="text-align:left;">Discounts Profile-15N/12N/10N/09N</th>
             </tr>
             <tr>
-                <th rowspan="2">Weightband</th>
-                <th rowspan="2">Inc</th>
-                <th rowspan="2">Add On</th>
+                <th>Weightband</th>
                <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th colspan="2">${zoneGroup.zone}</th>
-				</c:forEach>
-            </tr>
-            <tr>
-               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>Base</th>
-						<th>Int</th>
+						<th>${zoneGroup.zone}</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -472,22 +382,9 @@
             <c:forEach items="${ndocumentList}" var="weightBand">
 				<tr>
 					<td>${weightBand.name}</td>
-					<td>${weightBand.addOnWeightInt}kg</td>
-					<c:if test="${weightBand.type=='base'}">
-						<td align="center">N</td>
-					</c:if>
-					<c:if test="${weightBand.type=='add'}">
-						<td align="center">Y</td>
-					</c:if>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 					    <c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<c:if test="${weightBand.type=='base'}">
 							<td>${recDiscountMap[key]}%</td>
-						</c:if>
-						<c:if test="${weightBand.type=='add'}">
-							<td></td>
-						</c:if>
-						<td>${recDiscountMap[key]}%</td>	
 				   </c:forEach>
 			   </tr>
 			</c:forEach>
@@ -500,17 +397,9 @@
                 <th colspan="25" style="text-align:left;">Discounts Profile-48N</th>
             </tr>
             <tr>
-                <th rowspan="2">Weightband</th>
-                <th rowspan="2">Inc</th>
-                <th rowspan="2">Add On</th>
+                <th >Weightband</th>
                <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th colspan="2">${zoneGroup.zone}</th>
-				</c:forEach>
-            </tr>
-            <tr>
-               <c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
-						<th>Base</th>
-						<th>Int</th>
+						<th >${zoneGroup.zone}</th>
 				</c:forEach>
             </tr>
         </thead>
@@ -518,22 +407,9 @@
            <c:forEach items="${economyList}" var="weightBand">
 				<tr>
 					<td>${weightBand.name}</td>
-					<td>${weightBand.addOnWeightInt}kg</td>
-					<c:if test="${weightBand.type=='base'}">
-						<td align="center">N</td>
-					</c:if>
-					<c:if test="${weightBand.type=='add'}">
-						<td align="center">Y</td>
-					</c:if>
 					<c:forEach items="${zoneGroupList}" var="zoneGroup" begin="0">
 					    <c:set var="key">${weightBand.id}_${zoneGroup.id}</c:set>
-						<c:if test="${weightBand.type=='base'}">
-							<td>${recDiscountMap[key]}%</td>
-						</c:if>
-						<c:if test="${weightBand.type=='add'}">
-							<td></td>
-						</c:if>
-						<td>${recDiscountMap[key]}%</td>	
+						<td>${recDiscountMap[key]}%</td>
 				   </c:forEach>
 			   </tr>
 			</c:forEach>
@@ -541,7 +417,7 @@
     </table>
 <br />
 </div>
-<div class="tabPageSelected" id="conDIVrec">
+<div class="tabPageUnSelected" id="conDIVrec">
 <table class="table_B" width="100%">
         <thead>
 						<tr align="center">
@@ -618,7 +494,7 @@
 </table>
 </br>
 </div>
-<div class="tabPageSelected" id="hwDIVrec">
+<div class="tabPageUnSelected" id="hwDIVrec">
 <table class="table_B" width="100%">
         <thead>
 			<tr align="center">
@@ -678,11 +554,30 @@
    <br/>
   <div style="text-align: center">
   <input type="button" value="Close" class="cls-button" onclick="javascript:history.go(-1)" />
+  &nbsp;&nbsp;&nbsp;<input type="button" value="Rates" class="cls-button" onclick="rates();"/>
+  &nbsp;&nbsp;&nbsp;<input type="button" value="Summary" class="cls-button" onclick="summary();"/>
+  <c:if test="${exportFlag=='yes'}">
+	&nbsp;&nbsp;&nbsp;<input type="button" value="Export TariffCard" class="cls-button" onclick="downLoadPdf();"/>
+  </c:if>
    </div>
    <input type="hidden" id="hiddenID" value="${business.id}" name="business.id">
 </form>
 </div>
 <script type="text/javascript">
+var id = document.getElementById("hiddenID").value
+function downLoadPdf(){
+    document.forms[0].action="${ctx}/documentDown/downDocument/"+id;
+	document.forms[0].submit();
+}
+
+function rates(){
+	window.showModalDialog("${ctx}/ptQuery/rates/"+id,"","dialogWidth=840px;dialogHeight=450px");
+}
+
+function summary(){
+	window.showModalDialog("${ctx}/ptQuery/summaryInfo/"+id,"","dialogWidth=940px;dialogHeight=450px");
+}
+
 function tabPageControl(n) {
 	if(n==1){
 		document.getElementById("recDIV").style.cssText = "display:block;";

@@ -30,9 +30,9 @@
   
   <table class="modify">
     <tr>
-      <th>Application Date:</th>
-      <td><span id="appDate"><fmt:formatDate value="${business.applicationDate}" pattern="yyyy-MM-dd"/></span></td>
-      <th>Depot:</th>
+      <th width="20%">Application Date:</th>
+      <td width="40%"><span id="appDate"><fmt:formatDate value="${business.applicationDate}" pattern="yyyy-MM-dd"/></span></td>
+      <th width="20%">Depot:</th>
       <td>${business.depotCode}</td>
     </tr>
     <tr>
@@ -66,9 +66,9 @@
   </table>
   <table class="modify">
     <tr>
-      <th rowspan="2">Is the customer on fuel surcharge exemption or deduction now?</th>
-      <td rowspan="2">${customer.isFuleDeduction}</td>
-      <th>the Current fuel surcharge</th>
+      <th rowspan="2" width="40%">Is the customer on fuel surcharge exemption or deduction now?</th>
+      <td rowspan="2" width="27%">${customer.isFuleDeduction}</td>
+      <th width="20%">the Current fuel surcharge</th>
       <td>Per FS Index
       <input type="hidden" name="customer.fuelSurcharge" value="Per FS Index"/>
       <input type="hidden" name="customer.reqFuelSurcharge" value="Per FS Index"/>
@@ -88,8 +88,8 @@
       <td colspan="3">${customer.payment}</td>
     </tr>
     <tr>
-      <th>Is customer a mainly document sender?</th>
-      <td>${business.isDocumentSender}</td>
+      <th width="40%">Is customer a mainly document sender?</th>
+      <td width="27%">${business.isDocumentSender}</td>
       <th>Cons/Stop</th>
       <td>${business.consStop}</td>
     </tr>
@@ -106,7 +106,7 @@
     <tr>
       <th>Divison</th>
       <td><input type="text" value="G"/></td>
-      <th width="15%">Rate Category</th>
+      <th>Rate Category</th>
       <td>CN4PT</td>
     </tr>
 	<tr>
@@ -116,9 +116,9 @@
     </tr>
 	<tr>
       <th>End Date: </th>
-      <td><input type="text" value="Open"/></td>
-      <th width="15%">Review Date: </th>
-      <td><input type="text" value="Open"/></td>
+      <td><input type="text" value="Open" onclick="new Calendar().show(this,this)"/></td>
+      <th>Review Date: </th>
+      <td><input type="text" value="Open" onclick="new Calendar().show(this,this)"/></td>
     </tr>
   </table>
   </div>
@@ -132,6 +132,8 @@
   </div>
    <input type="hidden" id="hiddenID" value="${business.id}" name="business.id"/>
    <input type="hidden" id="examOppion" value="${businessVO.examOppion}" name="examOppion"/>
+   <input type="hidden" id="fileName" value="${businessVO.fileName}" name="fileName"/>
+   <input type="hidden" id="filePath" value="${businessVO.filePath}" name="filePath"/>
 </form>
 </div>
 </body>
@@ -141,19 +143,22 @@ document.getElementById('effDate').value=date.getFullYear()+'-'+(date.getMonth()
 
 function downLoadPdf(){
 	var id = document.getElementById("hiddenID").value
-    document.forms[0].action="${ctx}/documentDown/downDocument/"+id;
+    document.forms[0].action="${ctx}/documentDown/downDocument2/"+id;
 	document.forms[0].submit();
 }
 
 $(function() {
 	$("#Confirm").click(function(){
         var examOppion = document.getElementById("examOppion").value;
+        var fileName = document.getElementById("fileName").value;
+        var filePath = document.getElementById("filePath").value;
             $.ajax({
                 type:"POST",
                 url:"${ctx}/ptApprove/commercialConfirm",
-                data:"id="+document.getElementById("hiddenID").value+"&examOppion="+examOppion,
+                data:"examOppion="+examOppion+"&fileName="+fileName+"&filePath="+filePath+"&id="+document.getElementById("hiddenID").value,
                 success:function(data){
                 	alert('Approve Success!');
+                	window.location.href="${ctx}/ptQuery/analysePT";
                 },error:function(e) {
                     alert("error："+e);
                 }

@@ -26,10 +26,30 @@
 		</where>
 	</select>
 	
+	<insert id="batchInsert" parameterType="java.util.List">
+		insert into pt_rate (id,rate, businessId, tariffGroupId, zoneGroupId,payment) select SEQ_RATE.NEXTVAL,A.* from (
+		<foreach collection="list" item="item" index="index" separator="union" >
+			select #{item.rate},#{item.businessId},#{item.tariffGroupId},#{item.zoneGroupId},#{item.payment} from dual
+		</foreach>
+		) A
+	</insert>
+	
+	<delete id="deleteRateList" parameterType="Rate">
+	     delete from PT_RATE 
+	     <where>
+			<if test="businessId != null">
+				businessId=#{businessId}
+			</if>
+			<if test="payment != null">
+				and payment=#{payment}
+			</if>
+		</where>
+	</delete>
+	
 	
 	<insert id="save" parameterType="Rate" keyProperty="id">
-		insert into pt_rate (rate, businessId, tariffGroupId, zoneGroupId)
-		values (#{rate},#{businessId}, #{tariffGroupId}, #{zoneGroupId})
+		insert into pt_rate (rate, businessId, tariffGroupId, zoneGroupId,payment)
+		values (#{rate},#{businessId}, #{tariffGroupId}, #{zoneGroupId}, #{payment})
 	</insert>
 	
 	<delete id="delete" parameterType="Long">
